@@ -26,8 +26,15 @@ app.use(
     credentials: true,
   })
 );
-// Use regex to avoid path-to-regexp error on some Express/router versions
-app.options(/.*/, cors());
+// Generic OPTIONS handler to satisfy preflight without using app.options path patterns
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.sendStatus(204);
+  }
+  next();
+});
 app.use(bodyParser.json({ limit: "5mb" }));
 
 // Health check
