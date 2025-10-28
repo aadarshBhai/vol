@@ -13,10 +13,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const ORIGIN = process.env.FRONTEND_BASE_URL || "http://localhost:8080";
+const ORIGINS = ORIGIN.split(",").map((s) => s.trim()).filter(Boolean);
 
 // Middleware
-app.use(cors({ origin: ORIGIN, credentials: true }));
-app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // non-browser or same-origin
+      if (ORIGINS.includes(origin)) return callback(null, true);
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
+    credentials: true,
+  })
+);
+app.options("*", cors());
+app.use(bodyParser.json({ limit: "5mb" }));
 
 // Health check
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
