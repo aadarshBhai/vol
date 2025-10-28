@@ -10,7 +10,10 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target:
+          mode === "development"
+            ? "http://localhost:5000"
+            : "https://vol-backend-1xyc.onrender.com",
         changeOrigin: true,
       },
     },
