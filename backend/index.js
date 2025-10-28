@@ -26,10 +26,12 @@ app.use(
     credentials: true,
   })
 );
-app.options("*", cors());
+// Use regex to avoid path-to-regexp error on some Express/router versions
+app.options(/.*/, cors());
 app.use(bodyParser.json({ limit: "5mb" }));
 
 // Health check
+app.get("/", (_req, res) => res.json({ status: "ok" }));
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 app.get("/api/db-status", (_req, res) => {
