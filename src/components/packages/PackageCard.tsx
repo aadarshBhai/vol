@@ -53,7 +53,7 @@ const PackageCard = ({ package: pkg, onViewDetails, onBookNow, highlight }: Pack
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
-          src={(pkg.image?.startsWith("http") || pkg.image?.startsWith("data:")) ? pkg.image : `/src/assets/destinations/${pkg.image}.jpg`}
+          src={(pkg.image?.startsWith("http") || pkg.image?.startsWith("data:")) ? pkg.image : `/images/destinations/${pkg.image}.jpg`}
           alt={pkg.destination}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => {
