@@ -39,7 +39,8 @@ const Packages = () => {
     async function load() {
       try {
         setLoading(true);
-        const res = await fetch("/api/packages");
+        const API = (import.meta as any).env?.VITE_API_URL || "";
+        const res = await fetch(`${API}/api/packages`);
         const data = await res.json();
         if (!res.ok) throw new Error(data?.message || "Failed to fetch packages");
         const mapped: Package[] = (data.packages || []).map((p: any, idx: number) => ({

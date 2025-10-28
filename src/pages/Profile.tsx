@@ -64,7 +64,8 @@ export default function Profile() {
     if (!window.confirm("Are you sure you want to delete your profile? This cannot be undone.")) return;
     try {
       setDeleting(true);
-      const res = await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
+      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const res = await fetch(`${API}/api/users/${id}`, { method: "DELETE" });
       let msg = "Deleted";
       try {
         const data = await res.json();

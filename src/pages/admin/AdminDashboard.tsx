@@ -23,7 +23,8 @@ const AdminDashboard = () => {
   async function loadUsers() {
     try {
       setLoadingUsers(true);
-      const res = await fetch("http://localhost:5000/api/users");
+      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const res = await fetch(`${API}/api/users`);
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message || "Failed to fetch users");
       setUsersList(data.users || []);
@@ -36,7 +37,8 @@ const AdminDashboard = () => {
   async function loadPackages() {
     try {
       setLoadingPkgs(true);
-      const res = await fetch("http://localhost:5000/api/packages");
+      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const res = await fetch(`${API}/api/packages`);
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message || "Failed to fetch packages");
       setPkgList(data.packages || []);
@@ -88,7 +90,8 @@ const AdminDashboard = () => {
         image: form.image || "",
         itinerary: derived,
       };
-      const url = isEdit ? `http://localhost:5000/api/packages/${form.id}` : "http://localhost:5000/api/packages";
+      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const url = isEdit ? `${API}/api/packages/${form.id}` : `${API}/api/packages`;
       const method = isEdit ? "PUT" : "POST";
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json();
@@ -108,7 +111,8 @@ const AdminDashboard = () => {
 
   async function deletePackage(id: string) {
     try {
-      const res = await fetch(`http://localhost:5000/api/packages/${id}`, { method: "DELETE" });
+      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const res = await fetch(`${API}/api/packages/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message || "Failed to delete package");
       setPkgList((prev) => prev.filter((p) => p._id !== id));
@@ -381,11 +385,11 @@ const AdminDashboard = () => {
                             Refresh
                           </Button>
                           <Button
-                            variant="outline"
                             size="sm"
                             onClick={async () => {
                               try {
-                                const res = await fetch(`http://localhost:5000/api/users/${user._id}`, { method: "DELETE" });
+                                const API = (import.meta as any).env?.VITE_API_URL || "";
+                                const res = await fetch(`${API}/api/users/${user._id}`, { method: "DELETE" });
                                 const data = await res.json();
                                 if (!res.ok) throw new Error(data?.message || "Failed to delete");
                                 setUsersList((prev) => prev.filter((u) => u._id !== user._id));
