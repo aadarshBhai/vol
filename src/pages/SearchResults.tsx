@@ -21,7 +21,7 @@ const SearchResults = () => {
   useEffect(() => {
     async function load() {
       try {
-        const API = (import.meta as any).env?.VITE_API_URL || "";
+        const API = import.meta.env.VITE_API_URL || "";
         const res = await fetch(`${API}/api/packages`);
         const data = await res.json();
         if (!res.ok) throw new Error(data?.message || "Failed to fetch packages");

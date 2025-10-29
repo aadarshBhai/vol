@@ -31,7 +31,8 @@ export default function Profile() {
       }
       setUser(parsed);
       if (parsed && parsed.email) {
-        fetch("/api/users")
+        const API = import.meta.env.VITE_API_URL || "";
+        fetch(`${API}/api/users`)
           .then((res) => (res.ok ? res.json() : Promise.reject()))
           .then((data) => {
             const list = Array.isArray(data?.users) ? data.users : [];
@@ -64,7 +65,7 @@ export default function Profile() {
     if (!window.confirm("Are you sure you want to delete your profile? This cannot be undone.")) return;
     try {
       setDeleting(true);
-      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const API = import.meta.env.VITE_API_URL || "";
       const res = await fetch(`${API}/api/users/${id}`, { method: "DELETE" });
       let msg = "Deleted";
       try {

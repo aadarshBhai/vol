@@ -42,7 +42,7 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
-      const API = (import.meta as any).env?.VITE_API_URL || "";
+      const API = import.meta.env.VITE_API_URL || "";
       const res = await fetch(`${API}/api/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
