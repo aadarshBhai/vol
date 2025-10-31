@@ -45,24 +45,22 @@ app.use(
   })
 );
 
-// Handle preflight requests
-app.options('*', cors());
-
 // Log all incoming requests for debugging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Generic OPTIONS handler to satisfy preflight without using app.options path patterns
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    return res.status(204).send();
+// Handle preflight requests - must be before other routes
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin) || ORIGINS.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
   }
-  next();
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(204).send();
 });
 app.use(bodyParser.json({ limit: "5mb" }));
 

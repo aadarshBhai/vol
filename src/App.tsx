@@ -22,7 +22,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
-// Create a client with error handling
+// Create a client with basic configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,17 +32,12 @@ const queryClient = new QueryClient({
   },
 });
 
-// Global error handling for queries
-queryClient.getQueryCache().subscribe((event) => {
-  if (event?.type === 'error') {
-    console.error('Query Error:', event.query.state.error);
-  }
-  if (event?.type === 'updated' && event.query.state.status === 'error') {
-    console.error('Query Error (updated):', event.query.state.error);
-  }
-});
+// Global error handler for queries
+queryClient.getQueryCache().config.onError = (error) => {
+  console.error('Query Error:', error);
+};
 
-// Global error handling for mutations
+// Global error handler for mutations
 queryClient.getMutationCache().config.onError = (error) => {
   console.error('Mutation Error:', error);
 };
