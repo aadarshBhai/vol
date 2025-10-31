@@ -8,6 +8,7 @@ import { connectDB, getDBStatus } from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
 import packagesRoutes from "./routes/packages.js";
+import adminRoutes from "./routes/admin.js";
 
 dotenv.config();
 const app = express();
@@ -81,6 +82,7 @@ app.get("/api/db-status", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/packages", packagesRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Start server
 async function start() {
