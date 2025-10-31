@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Plane, Package, Users, FileText, MapPin, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { packages as demoPackages, bookings } from "@/lib/mockData";
+import { toast } from "sonner";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -19,6 +20,44 @@ const AdminDashboard = () => {
   const [itinerary, setItinerary] = useState<Array<{ day: number; title: string; description: string }>>([]);
   const [rawItineraryText, setRawItineraryText] = useState<string>("");
   const [savingPkg, setSavingPkg] = useState(false);
+  const navigate = useNavigate();
+
+  // Check authentication on component mount and when active tab changes
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      navigate("/admin/login", { replace: true });
+      return;
+    }
+    
+    // Add authorization header to all fetch requests
+    const originalFetch = window.fetch;
+    window.fetch = async (input, init = {}) => {
+      const headers = new Headers(init.headers);
+      if (!headers.has('Authorization')) {
+        headers.append('Authorization', `Bearer ${token}`);
+      }
+      const response = await originalFetch(input, { ...init, headers });
+      
+      // If unauthorized, log out the user
+      if (response.status === 401) {
+        handleLogout();
+      }
+      
+      return response;
+    };
+    
+    return () => {
+      window.fetch = originalFetch; // Restore original fetch
+    };
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
+    toast.success("Successfully logged out");
+    navigate("/admin/login");
+  };
 
   async function loadUsers() {
     try {
@@ -120,17 +159,45 @@ const AdminDashboard = () => {
     }
   }
 
+  // Load data based on active tab
   useEffect(() => {
-    loadUsers();
-    loadPackages();
-  }, []);
+    const loadTabData = async () => {
+      try {
+        switch (activeTab) {
+          case 'users':
+            await loadUsers();
+            break;
+          case 'packages':
+          case 'destinations':
+            await loadPackages();
+            break;
+          case 'bookings':
+            // Add booking loading logic here
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        console.error(`Error loading ${activeTab} data:`, error);
+        toast.error(`Failed to load ${activeTab} data`);
+      }
+    };
+
+    loadTabData();
+  }, [activeTab]);
 
   const stats = [
-    { title: "Total Packages", value: pkgList.length, icon: Package },
-    { title: "Total Users", value: usersList.length, icon: Users },
-    { title: "Total Bookings", value: bookings.length, icon: FileText },
-    { title: "Destinations", value: 6, icon: MapPin },
+    { id: "packages", title: "Total Packages", value: pkgList.length, icon: Package },
+    { id: "users", title: "Total Users", value: usersList.length, icon: Users },
+    { id: "bookings", title: "Total Bookings", value: bookings.length, icon: FileText },
+    { id: "destinations", title: "Destinations", value: new Set(pkgList.map(pkg => pkg.destination)).size, icon: MapPin },
   ];
+
+  const handleStatClick = (tabId: string) => {
+    setActiveTab(tabId);
+    // Scroll to the tabs section for better UX
+    document.getElementById('dashboard-tabs')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -140,7 +207,7 @@ const AdminDashboard = () => {
             <Plane className="h-6 w-6" />
             <span>Volvoro Admin</span>
           </Link>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
             Logout
           </Button>
@@ -157,25 +224,36 @@ const AdminDashboard = () => {
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
-              key={stat.title}
+              key={stat.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="cursor-pointer"
+              onClick={() => handleStatClick(stat.id === 'destinations' ? 'packages' : stat.id)}
             >
-              <Card>
+              <Card className="h-full transition-all duration-200 hover:shadow-md hover:border-primary/20">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                  <stat.icon className="h-4 w-4 text-muted-foreground" />
+                  <stat.icon className={`h-4 w-4 ${activeTab === stat.id ? 'text-primary' : 'text-muted-foreground'}`} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="text-2xl font-bold">
+                    {stat.id === 'destinations' 
+                      ? new Set(pkgList.map(pkg => pkg.destination)).size 
+                      : stat.value}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {activeTab === stat.id ? 'Viewing' : 'Click to view'} {stat.title.toLowerCase()}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} id="dashboard-tabs">
           <TabsList className="mb-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="packages">Packages</TabsTrigger>
