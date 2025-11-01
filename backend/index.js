@@ -7,25 +7,20 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import packageRoutes from "./routes/packages.js";
 import uploadRoutes from "./routes/uploads.js";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from 'fs';
 
 // Load environment variables
 dotenv.config();
 
-// Check required environment variables
+// ✅ Check required environment variables
 const requiredEnvVars = ['MONGODB_URI'];
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-
+const missingVars = requiredEnvVars.filter((v) => !process.env[v]);
 if (missingVars.length > 0) {
   console.error('❌ Missing required environment variables:', missingVars.join(', '));
-  console.error('Please set them in your .env file or deployment environment.');
   process.exit(1);
 }
 
-// Connect to MongoDB
-connectDB(process.env.MONGODB_URI).catch(err => {
+// ✅ Connect to MongoDB
+connectDB(process.env.MONGODB_URI).catch((err) => {
   console.error('❌ Failed to connect to MongoDB:', err.message);
   process.exit(1);
 });
@@ -34,64 +29,52 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const FRONTEND_URL = process.env.FRONTEND_BASE_URL || 'https://volvorotourexplorer.com';
 
-// CORS configuration
-const corsOptions = {
-  origin: [
-    FRONTEND_URL,
-    'http://localhost:8080',
-    'http://localhost:3000',
-    'https://volvorotourexplorer.com',
-    'https://www.volvorotourexplorer.com'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Origin',
-    'Access-Control-Allow-Headers',
-    'Access-Control-Request-Method',
-    'Access-Control-Request-Headers'
-  ],
-  exposedHeaders: [
-    'Content-Range',
-    'X-Content-Range',
-    'Access-Control-Allow-Origin',
-    'Access-Control-Allow-Credentials'
-  ],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-};
+// ✅ Define allowed origins
+const allowedOrigins = [
+  FRONTEND_URL,
+  'https://volvorotourexplorer.com',
+  'https://www.volvorotourexplorer.com',
+  'http://localhost:3000',
+  'http://localhost:8080',
+];
 
-// Apply CORS with options
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
-
-// Log CORS headers for debugging
+// ✅ Enhanced CORS setup (fixes preflight issue)
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (corsOptions.origin.includes(origin)) {
+  if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', 'true');
   }
+
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+  );
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, X-Requested-With, Accept, Origin'
+  );
+
+  // ✅ Handle preflight (OPTIONS) requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
   next();
 });
 
+// ✅ Middleware setup
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// API Routes
+// ✅ API Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/uploads", uploadRoutes);
 
-// API Root Endpoint
+// ✅ Root endpoint (API info)
 app.get('/', (req, res) => {
   res.json({
     message: 'Volvo Explorer API',
@@ -109,7 +92,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 404 Handler
+// ✅ 404 handler
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -118,7 +101,7 @@ app.use((req, res) => {
   });
 });
 
-// Error Handler
+// ✅ Error handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(500).json({
@@ -128,7 +111,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
+// ✅ Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
