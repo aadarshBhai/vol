@@ -60,7 +60,33 @@ router.post("/login", async (req, res) => {
 });
 
 // -------------------- FORGOT PASSWORD --------------------
-router.post("/forgot-password", async (req, res) => {
+// CORS middleware for forgot-password
+const allowCors = (req, res, next) => {
+  const allowedOrigins = [
+    'https://volvorotourexplorer.com',
+    'https://www.volvorotourexplorer.com',
+    'http://localhost:3000',
+    'http://localhost:8080'
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+};
+
+// Apply CORS middleware specifically to forgot-password
+router.options("/forgot-password", allowCors);
+router.post("/forgot-password", allowCors, async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
