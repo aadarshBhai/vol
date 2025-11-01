@@ -99,32 +99,50 @@ router.post("/forgot-password", allowCors, async (req, res) => {
 
     const resetLink = `${process.env.FRONTEND_BASE_URL}/reset-password?token=${token}`;
 
-    // Create transporter
+    // Create transporter with improved configuration
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 465,
+      service: 'gmail', // Use Gmail's SMTP server
+      host: 'smtp.gmail.com', // Gmail SMTP server
+      port: 465, // Gmail's secure port
       secure: true, // true for 465, false for other ports
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS.replace(/"/g, ''), // Remove any quotes from the password
+        user: process.env.SMTP_USER || 'thevolvoro@gmail.com',
+        pass: process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/"/g, '') : 'zbfz xxtc fsby xyrz',
       },
       tls: {
-        rejectUnauthorized: false // Only for development with self-signed certificates
-      }
+        // Do not fail on invalid certs
+        rejectUnauthorized: false
+      },
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 5000,    // 5 seconds
+      socketTimeout: 10000,     // 10 seconds
+      debug: true,              // Show debug logs
+      logger: true              // Log connection details
     });
 
-    // Verify connection configuration
-    await new Promise((resolve, reject) => {
-      transporter.verify(function(error, success) {
-        if (error) {
-          console.error('SMTP Connection Error:', error);
-          reject(new Error('Failed to connect to email server'));
-        } else {
-          console.log('Server is ready to take our messages');
-          resolve(success);
-        }
+    // Verify connection configuration with timeout
+    try {
+      await new Promise((resolve, reject) => {
+        // Set a timeout for the connection test
+        const timeout = setTimeout(() => {
+          reject(new Error('SMTP Connection timeout'));
+        }, 10000); // 10 second timeout
+
+        transporter.verify((error, success) => {
+          clearTimeout(timeout);
+          if (error) {
+            console.error('SMTP Connection Error:', error);
+            reject(new Error(`Failed to connect to email server: ${error.message}`));
+          } else {
+            console.log('✅ SMTP Server is ready to send emails');
+            resolve(success);
+          }
+        });
       });
-    });
+    } catch (error) {
+      console.error('SMTP Connection Test Failed:', error);
+      throw new Error(`Email server connection failed: ${error.message}`);
+    }
 
     // Send email
     await new Promise((resolve, reject) => {
