@@ -9,6 +9,7 @@ import packageRoutes from "./routes/packages.js";
 import uploadRoutes from "./routes/uploads.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from 'fs';
 
 // Load environment variables
 dotenv.config();
@@ -31,14 +32,23 @@ connectDB(process.env.MONGODB_URI).catch(err => {
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const FRONTEND_URL = process.env.FRONTEND_BASE_URL || 'https://volvorotourexplorer.com';
 
-// Fix dirname issue in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Middleware
+app.use(cors({
+  origin: [
+    FRONTEND_URL,
+    'http://localhost:8080', // For local development
+    'http://localhost:3000'  // Common frontend dev server port
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
+}));
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // API Routes
 app.use("/api/admin", adminRoutes);
@@ -47,12 +57,41 @@ app.use("/api/users", userRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/uploads", uploadRoutes);
 
-// Serve static frontend
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// API Root Endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Volvo Explorer API',
+    status: 'running',
+    version: '1.0.0',
+    documentation: 'https://github.com/aadarshBhai/vol',
+    apiEndpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      packages: '/api/packages',
+      admin: '/api/admin',
+      uploads: '/api/uploads'
+    },
+    frontend: FRONTEND_URL
+  });
+});
 
-// ✅ Fix: replaced "*" with safe catch-all route
+// 404 Handler
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.status(404).json({
+    success: false,
+    message: 'API endpoint not found',
+    path: req.originalUrl
+  });
+});
+
+// Error Handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 // Start server
