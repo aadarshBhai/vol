@@ -7,6 +7,9 @@ import { fileURLToPath } from "url";
 
 import adminRoutes from "./routes/admin.js";
 import uploadRoutes from "./routes/uploads.js";
+import authRoutes from "./routes/auth.js";
+import usersRoutes from "./routes/users.js";
+import packagesRoutes from "./routes/packages.js";
 
 // Load environment variables
 dotenv.config();
@@ -32,13 +35,27 @@ mongoose
 // API Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/uploads", uploadRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/packages", packagesRoutes);
 
-// Static files setup for production (Vite + Render)
+// Create uploads directory if it doesn't exist
+import fs from 'fs';
+import { dirname } from 'path';
+
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const clientPath = path.join(__dirname, "../dist");
+const __dirname = dirname(__filename);
+const uploadsDir = path.join(__dirname, '../public/uploads');
 
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Serve static files
+const clientPath = path.join(__dirname, "../dist");
 app.use(express.static(clientPath));
+app.use('/uploads', express.static(uploadsDir));
 
 // Handle all other routes (SPA fallback)
 app.get("*", (req, res) => {
