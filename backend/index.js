@@ -10,8 +10,24 @@ import uploadRoutes from "./routes/uploads.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Load environment variables
 dotenv.config();
-connectDB();
+
+// Check required environment variables
+const requiredEnvVars = ['MONGODB_URI'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars.join(', '));
+  console.error('Please set them in your .env file or deployment environment.');
+  process.exit(1);
+}
+
+// Connect to MongoDB
+connectDB(process.env.MONGODB_URI).catch(err => {
+  console.error('❌ Failed to connect to MongoDB:', err.message);
+  process.exit(1);
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
