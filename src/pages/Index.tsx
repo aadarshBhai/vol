@@ -114,7 +114,7 @@ const Index = () => {
               <h3 className="text-xl font-semibold mb-1">Ayush Singh</h3>
               <p className="text-sm text-primary mb-3 font-medium">Founder</p>
               <p className="text-sm text-muted-foreground">
-                A dedicated entrepreneur with a passion for creating exceptional travel experiences and building successful businesses.
+                The visionary force behind Volvoro Tour Explorer. His passion for exploring the world through travel inspired the creation of a brand built on trust, experience, and excellence. With a deep understanding of the travel industry, Ayush leads the company with innovation, personalized service, and a commitment to creating unforgettable journeys for every traveler.
               </p>
             </motion.div>
 
@@ -144,9 +144,9 @@ const Index = () => {
                 </div>
               </div>
               <h3 className="text-xl font-semibold mb-1">Puja Singh</h3>
-              <p className="text-sm text-primary mb-3 font-medium">Chief Executive Officer</p>
+              <p className="text-sm text-primary mb-3 font-medium">CEO</p>
               <p className="text-sm text-muted-foreground">
-                Leading our vision and strategic direction to create exceptional travel experiences.
+                Serves as the CEO of Volvoro Tour Explorer, guiding the company's strategic direction with expertise and precision. She focuses on key decisions, customer relationships, and maintaining Volvoro's standards of professionalism and reliability. Her leadership combines insight with dedication, ensuring that every journey reflects the brand's promise of quality and care.
               </p>
             </motion.div>
 
@@ -159,12 +159,12 @@ const Index = () => {
               className="bg-card rounded-xl border border-border p-6 text-center hover:shadow-lg transition-shadow"
             >
               <div className="w-36 h-36 mx-auto mb-4 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 flex items-center justify-center text-4xl font-bold text-primary">
-                PK
+                AU
               </div>
-              <h3 className="text-xl font-semibold mb-1">Priya Kapoor</h3>
+              <h3 className="text-xl font-semibold mb-1">Abhijeet Upadhyay</h3>
               <p className="text-sm text-primary mb-3 font-medium">Managing Director</p>
               <p className="text-sm text-muted-foreground">
-                Ensuring operational excellence and exceptional service delivery across all our tours.
+                The Managing Director at Volvoro Tour Explorer, responsible for finance, marketing, and booking coordination. With his sharp operational sense and strong leadership, he ensures that every process — from tour planning to execution — runs efficiently. His commitment to excellence keeps Volvoro organized, dependable, and client-focused.
               </p>
             </motion.div>
 
@@ -189,9 +189,9 @@ const Index = () => {
                 />
               </div>
               <h3 className="text-xl font-semibold mb-1">Aadarsh Kumar</h3>
-              <p className="text-sm text-primary mb-3 font-medium">Technology Head</p>
+              <p className="text-sm text-primary mb-3 font-medium">Head of Technology</p>
               <p className="text-sm text-muted-foreground">
-                Leading our digital transformation and creating seamless booking experiences.
+                The Head of Technology at Volvoro Tour Explorer, managing the website, digital systems, and all tech-related operations. His technical expertise ensures a smooth, secure, and user-friendly online experience for every customer. Adarsh's innovative approach keeps Volvoro ahead in digital performance and customer convenience.
               </p>
             </motion.div>
           </div>
