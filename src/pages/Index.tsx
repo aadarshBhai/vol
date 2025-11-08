@@ -113,7 +113,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-1">Ayush Singh</h3>
               <p className="text-sm text-primary mb-3 font-medium">Founder</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground text-justify">
                 The visionary force behind Volvoro Tour Explorer. His passion for exploring the world through travel inspired the creation of a brand built on trust, experience, and excellence. With a deep understanding of the travel industry, Ayush leads the company with innovation, personalized service, and a commitment to creating unforgettable journeys for every traveler.
               </p>
             </motion.div>
@@ -145,7 +145,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-1">Puja Singh</h3>
               <p className="text-sm text-primary mb-3 font-medium">CEO</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground text-justify">
                 Serves as the CEO of Volvoro Tour Explorer, guiding the company's strategic direction with expertise and precision. She focuses on key decisions, customer relationships, and maintaining Volvoro's standards of professionalism and reliability. Her leadership combines insight with dedication, ensuring that every journey reflects the brand's promise of quality and care.
               </p>
             </motion.div>
@@ -163,7 +163,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-1">Abhijeet Upadhyay</h3>
               <p className="text-sm text-primary mb-3 font-medium">Managing Director</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground text-justify">
                 The Managing Director at Volvoro Tour Explorer, responsible for finance, marketing, and booking coordination. With his sharp operational sense and strong leadership, he ensures that every process — from tour planning to execution — runs efficiently. His commitment to excellence keeps Volvoro organized, dependable, and client-focused.
               </p>
             </motion.div>
@@ -190,7 +190,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-1">Aadarsh Kumar</h3>
               <p className="text-sm text-primary mb-3 font-medium">Head of Technology</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground text-justify">
                 The Head of Technology at Volvoro Tour Explorer, managing the website, digital systems, and all tech-related operations. His technical expertise ensures a smooth, secure, and user-friendly online experience for every customer. Adarsh's innovative approach keeps Volvoro ahead in digital performance and customer convenience.
               </p>
             </motion.div>
