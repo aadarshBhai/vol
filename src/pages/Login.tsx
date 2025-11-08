@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plane, Eye, EyeOff } from "lucide-react";
+import { Plane, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -62,11 +62,20 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 px-4 relative">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="absolute left-4 top-4 md:left-8 md:top-8"
+        onClick={() => window.history.back()}
+      >
+        <ArrowLeft className="h-5 w-5" />
+        <span className="sr-only">Back</span>
+      </Button>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl"
+        className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-2xl relative"
       >
         {/* Logo */}
         <div className="text-center">
