@@ -1,43 +1,48 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, Instagram, Facebook } from "lucide-react";
+import { Mail, Phone, Instagram, Facebook, MessageCircle } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border bg-muted/30">
+    <footer className="bg-teal-700 text-white">
       <div className="container mx-auto px-4 py-12">
+        <div className="mb-8 text-center">
+          <p className="text-teal-100 text-lg font-light italic">
+            "Crafting Unforgettable Journeys with Passion and Precision."
+          </p>
+        </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-xl font-bold text-primary">
-              <img src="/logo.jpg" alt="Volvoro logo" className="h-8 w-8 object-contain" />
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xl font-bold text-white">
+              <img src="/logo.jpg" alt="Volvoro logo" className="h-10 w-10 object-contain rounded-full" />
               <span>Volvoro</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-teal-100 text-center md:text-left">
               Travel, Redefined — Explore India with Comfort, Class, and Confidence.
             </p>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
+          <div className="text-center md:text-left">
+            <h3 className="mb-4 text-sm font-semibold text-white">Quick Links</h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/packages" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/packages" className="text-teal-100 hover:text-white transition-colors">
                   Packages
                 </Link>
               </li>
               <li>
-                <Link to="/plan-trip" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/plan-trip" className="text-teal-100 hover:text-white transition-colors">
                   Plan My Trip
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/about" className="text-teal-100 hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/contact" className="text-teal-100 hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
@@ -45,60 +50,73 @@ const Footer = () => {
           </div>
 
           {/* Destinations */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Popular Destinations</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Manali</li>
-              <li>Shimla</li>
-              <li>Jaisalmer</li>
-              <li>Udaipur</li>
-              <li>Mussoorie</li>
-              <li>Chopta</li>
+          <div className="text-center md:text-left">
+            <h3 className="mb-4 text-sm font-semibold text-white">Popular Destinations</h3>
+            <ul className="space-y-2 text-sm text-teal-100">
+              <li className="hover:text-white transition-colors cursor-pointer">Manali</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Shimla</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Jaisalmer</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Udaipur</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Mussoorie</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Chopta</li>
             </ul>
           </div>
 
           {/* Contact */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Contact Us</h3>
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
+          <div className="text-center md:text-left">
+            <h3 className="mb-4 text-sm font-semibold text-white">Contact Us</h3>
+            <ul className="space-y-3 text-sm text-teal-100">
+              <li className="flex items-center justify-center md:justify-start gap-2">
+                <Phone className="h-4 w-4 flex-shrink-0" />
                 <span>+91 84349 03291</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
+              <li className="flex items-center justify-center md:justify-start gap-2">
+                <Phone className="h-4 w-4 flex-shrink-0" />
                 <span>+91 74818 80404</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+              <li className="flex items-center justify-center md:justify-start gap-2">
+                <Mail className="h-4 w-4 flex-shrink-0" />
                 <span>thevolvoro@gmail.com</span>
               </li>
-              <li className="mt-4 flex gap-4">
+              <li className="mt-6 flex justify-center md:justify-start gap-6">
                 <a
-                  href="https://www.instagram.com/volvoro_tour_explorer/?utm_source=ig_web_button_share_sheet"
+                  href="https://www.instagram.com/volvoro_tour_explorer/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-white hover:text-teal-200 transition-colors"
                   aria-label="Instagram"
                 >
-                  <Instagram className="h-5 w-5" />
+                  <Instagram className="h-6 w-6" />
                 </a>
                 <a
                   href="https://www.facebook.com/share/173W9x9HXv/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-white hover:text-teal-200 transition-colors"
                   aria-label="Facebook"
                 >
-                  <Facebook className="h-5 w-5" />
+                  <Facebook className="h-6 w-6" />
+                </a>
+                <a
+                  href="https://wa.me/918434903291"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-teal-200 transition-colors"
+                  aria-label="WhatsApp"
+                >
+                  <MessageCircle className="h-6 w-6" />
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Volvoro Tour Explorer. All rights reserved.</p>
+        <div className="mt-12 pt-6 border-t border-teal-600 text-center text-sm text-teal-100">
+          <p>&copy; {new Date().getFullYear()} Volvoro. All rights reserved.</p>
+          <div className="mt-2 flex justify-center space-x-6 text-xs">
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          </div>
         </div>
       </div>
     </footer>

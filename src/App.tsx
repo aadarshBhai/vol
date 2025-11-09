@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Packages from "./pages/Packages";
 import PlanMyTrip from "./pages/PlanMyTrip";
 import SearchResults from "./pages/SearchResults";
+import SearchPage from "./pages/SearchPage";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -73,8 +74,8 @@ const AppRoutes = () => (
   <ErrorBoundary>
     <Routes>
       <Route path="/" element={<Index />} />
-      <Route path="/packages" element={<Packages />} />
       <Route path="/search" element={<SearchResults />} />
+      <Route path="/packages" element={<Packages />} />
       <Route
         path="/plan-trip"
         element={
@@ -88,6 +89,7 @@ const AppRoutes = () => (
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/register" element={<Navigate to="/signup" replace />} />
       <Route
         path="/profile"
         element={

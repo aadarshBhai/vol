@@ -26,7 +26,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl font-bold leading-tight text-foreground md:text-6xl"
+            className="font-heading text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl"
           >
             Travel, Redefined
           </motion.h1>
@@ -34,34 +34,32 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-muted-foreground md:text-2xl"
+            className="max-w-2xl text-xl font-light leading-relaxed text-gray-100 md:text-2xl"
           >
-            Effortless, Authentic, and Unforgettable journeys from Delhi
+            Effortless, Authentic, and Unforgettable Journeys from Delhi.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-wrap gap-4"
+            className="mt-8 flex flex-wrap gap-6"
           >
-            <a href="#packages">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="rounded-lg bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-lg transition-shadow hover:shadow-xl"
-              >
-                Explore Packages
-              </motion.button>
-            </a>
-            <a href="/plan-trip">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="rounded-lg border-2 border-primary bg-transparent px-8 py-3 font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-              >
-                Plan My Trip
-              </motion.button>
-            </a>
+            <motion.a 
+              href="#packages"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-teal-700 hover:shadow-xl"
+            >
+              Explore Packages
+            </motion.a>
+            <motion.a 
+              href="/plan-trip"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center justify-center rounded-lg border-2 border-teal-600 bg-white px-8 py-4 text-lg font-semibold text-teal-600 transition-all hover:bg-gray-50"
+            >
+              Plan My Trip
+            </motion.a>
           </motion.div>
         </motion.div>
       </div>

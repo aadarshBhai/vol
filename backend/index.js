@@ -58,34 +58,66 @@ const allowedOrigins = [
   "http://localhost:8080",
 ];
 
-// CORS Headers for all responses
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Only set CORS headers for allowed origins
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
+// Import cors package
+import cors from 'cors';
 
-// Handle OPTIONS for all routes
-app.options('*', (req, res) => {
-  res.status(200).end();
-});
+// Configure CORS with specific origin handling
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Enable CORS with specific options
+const corsConfig = {
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+};
+
+// Apply CORS to all routes
+app.use(cors(corsConfig));
+
+// Handle preflight requests for all routes
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(200).send();
+});
 
 // Routes
 app.use("/api/admin", adminRoutes);
@@ -112,8 +144,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// 404 Handler
-app.use((req, res) => {
+// 404 Handler - should be after all other routes
+app.use((req, res, next) => {
   res.status(404).json({
     success: false,
     message: "API endpoint not found",
@@ -121,13 +153,13 @@ app.use((req, res) => {
   });
 });
 
-// Error Handler
+// Error Handler - should be after all other middleware and routes
 app.use((err, req, res, next) => {
   console.error("Error:", err);
-  res.status(500).json({
+  res.status(err.status || 500).json({
     success: false,
-    message: "Internal server error",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    message: err.message || "Internal server error",
+    error: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
 });
 

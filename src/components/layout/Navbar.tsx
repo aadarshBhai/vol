@@ -55,38 +55,69 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <nav className="sticky top-0 z-40 w-full border-b border-gold-200 bg-white/90 backdrop-blur-lg">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 text-xl font-bold text-primary">
-          <img src="/logo.jpg" alt="Volvoro logo" className="h-8 w-8 object-contain" />
-          <span>Volvoro Tour Explorer</span>
+        <Link to="/" className="group flex items-center gap-2 font-bold text-foreground">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-800 p-2">
+            <Plane className="h-5 w-5 text-white transition-transform duration-300 group-hover:rotate-12" />
+          </div>
+          <span className="bg-gradient-to-r from-teal-800 to-gold-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
+            VolvoRo
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-8">
+        <div className="hidden items-center gap-6 md:flex">
           {navItems.map((item) => (
             <Link
-              key={item.path}
+              key={item.name}
               to={item.path}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                isActive(item.path) ? "text-primary" : "text-foreground"
+              className={`relative px-2 py-1 text-sm font-medium transition-all duration-300 before:absolute before:bottom-0 before:left-0 before:h-0.5 before:w-0 before:bg-gradient-to-r before:from-teal-600 before:to-gold-500 before:transition-all before:duration-300 hover:before:w-full ${
+                location.pathname === item.path 
+                  ? 'font-semibold text-teal-700 before:w-full' 
+                  : 'text-gray-700 hover:text-teal-700'
               }`}
             >
               {item.name}
             </Link>
           ))}
           {user ? (
-            <div className="flex items-center gap-2">
-              <Link to="/profile">
-                <Button variant="outline" size="sm">Profile</Button>
-              </Link>
-              <Button size="sm" onClick={handleLogout}>Logout</Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLogout}
+                className="border-gold-400 text-gold-700 hover:bg-gold-50 hover:text-gold-800"
+              >
+                Logout
+              </Button>
+              <Button 
+                size="sm" 
+                asChild
+                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md hover:from-teal-700 hover:to-teal-800"
+              >
+                <Link to="/profile">Dashboard</Link>
+              </Button>
             </div>
           ) : (
-            <Link to="/login">
-              <Button variant="outline" size="sm">Login</Button>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                asChild
+                className="border-gold-400 text-gold-700 hover:bg-gold-50 hover:text-gold-800"
+              >
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button 
+                size="sm" 
+                asChild
+                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md hover:from-teal-700 hover:to-teal-800"
+              >
+                <Link to="/register">Sign Up</Link>
+              </Button>
+            </div>
           )}
         </div>
 
@@ -104,37 +135,68 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden border-b border-border bg-background md:hidden"
+            className="absolute left-0 top-20 z-50 w-full bg-white/95 shadow-xl backdrop-blur-lg md:hidden"
           >
-            <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
+            <div className="flex flex-col space-y-1 p-4">
               {navItems.map((item) => (
                 <Link
-                  key={item.path}
+                  key={item.name}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(item.path) ? "text-primary" : "text-foreground"
+                  className={`rounded-md px-4 py-3 text-sm font-medium transition-colors ${
+                    isActive(item.path)
+                      ? 'bg-teal-50 text-teal-700 font-semibold'
+                      : 'text-gray-700 hover:bg-gold-50 hover:text-teal-700'
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
-              {user ? (
-                <>
-                  <Link to="/profile" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">Profile</Button>
-                  </Link>
-                  <Button size="sm" className="w-full" onClick={handleLogout}>Logout</Button>
-                </>
-              ) : (
-                <Link to="/login" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full">Login</Button>
-                </Link>
-              )}
+              <div className="mt-2 border-t border-gold-100 pt-3">
+                {user ? (
+                  <>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-gold-700 hover:bg-gold-50 hover:text-gold-800" 
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                    <Button 
+                      className="mt-2 w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800" 
+                      asChild
+                    >
+                      <Link to="/profile" onClick={() => setIsOpen(false)}>
+                        Dashboard
+                      </Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-gold-700 hover:bg-gold-50 hover:text-gold-800" 
+                      asChild
+                    >
+                      <Link to="/login" onClick={() => setIsOpen(false)}>
+                        Login
+                      </Link>
+                    </Button>
+                    <Button 
+                      className="mt-2 w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800" 
+                      asChild
+                    >
+                      <Link to="/register" onClick={() => setIsOpen(false)}>
+                        Sign Up
+                      </Link>
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

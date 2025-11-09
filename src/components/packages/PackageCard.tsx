@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Calendar, Users, MapPin, MessageCircle, Info } from "lucide-react";
+import { Calendar, Users, MapPin, MessageCircle, Info, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Package } from "@/lib/mockData";
@@ -47,8 +47,9 @@ const PackageCard = ({ package: pkg, onViewDetails, onBookNow, highlight }: Pack
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -8 }}
-      className="group overflow-hidden rounded-2xl border border-border bg-card shadow-lg transition-all hover:shadow-2xl"
+      transition={{ duration: 0.5 }}
+      className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all hover:shadow-xl hover:-translate-y-1"
+      style={{ borderRadius: '12px' }}
     >
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden">
@@ -77,10 +78,10 @@ const PackageCard = ({ package: pkg, onViewDetails, onBookNow, highlight }: Pack
               <Calendar className="h-4 w-4" />
               {pkg.duration}
             </span>
-            <span className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              {pkg.type}
-            </span>
+            <div className="absolute bottom-4 left-4 flex items-center text-white">
+              <MapPin className="mr-1 h-4 w-4" />
+              <span className="text-sm font-medium drop-shadow-md">{pkg.destination}</span>
+            </div>
           </div>
         </div>
 
@@ -102,43 +103,50 @@ const PackageCard = ({ package: pkg, onViewDetails, onBookNow, highlight }: Pack
         </div>
 
         {/* Price */}
-        <div className="flex items-end justify-between">
-          <div>
+        {/* Price and Actions */}
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="text-center mb-4">
             <p className="text-sm text-muted-foreground">Starting from</p>
-            <p className="text-3xl font-bold text-primary">₹{pkg.price.toLocaleString()}</p>
+            <p className="text-xl font-bold text-foreground">₹{pkg.price.toLocaleString()}</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                variant="outline"
+                className="w-full border-primary/20 bg-transparent hover:bg-primary/5 group"
+                onClick={() => onViewDetails(pkg)}
+              >
+                <span className="flex items-center justify-center">
+                  View Details
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Button>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800"
+                onClick={() => onBookNow(pkg)}
+              >
+                Book Now
+              </Button>
+            </motion.div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleWhatsAppEnquiry}
+              className="w-full text-foreground/70 hover:bg-transparent hover:text-[#25D366]"
+            >
+              <MessageCircle className="mr-2 h-4 w-4" />
+              Enquiry on WhatsApp
+            </Button>
           </div>
         </div>
-
-        {/* Actions */}
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onViewDetails(pkg)}
-            className="w-full"
-          >
-            <Info className="mr-2 h-4 w-4" />
-            Details
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => onBookNow(pkg)}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            <MapPin className="mr-2 h-4 w-4" />
-            Book Now
-          </Button>
-        </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleWhatsAppEnquiry}
-          className="w-full border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white"
-        >
-          <MessageCircle className="mr-2 h-4 w-4" />
-          Enquiry on WhatsApp
-        </Button>
       </div>
     </motion.div>
   );

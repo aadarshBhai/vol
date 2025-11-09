@@ -64,13 +64,15 @@ const Login = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 px-4 relative">
       <Button 
+        asChild
         variant="ghost" 
         size="icon" 
         className="absolute left-4 top-4 md:left-8 md:top-8"
-        onClick={() => window.history.back()}
       >
-        <ArrowLeft className="h-5 w-5" />
-        <span className="sr-only">Back</span>
+        <Link to="/">
+          <ArrowLeft className="h-5 w-5" />
+          <span className="sr-only">Back to Home</span>
+        </Link>
       </Button>
       <motion.div
         initial={{ opacity: 0, y: 20 }}

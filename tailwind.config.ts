@@ -5,6 +5,10 @@ export default {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
+    fontFamily: {
+      sans: ['var(--font-sans)'],
+      heading: ['var(--font-heading)'],
+    },
     container: {
       center: true,
       padding: "2rem",
@@ -13,12 +17,62 @@ export default {
       },
     },
     extend: {
+      typography: (theme: any) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.gray.800'),
+            h1: {
+              fontFamily: 'var(--font-heading)',
+              fontWeight: '700',
+            },
+            h2: {
+              fontFamily: 'var(--font-heading)',
+              fontWeight: '600',
+            },
+            h3: {
+              fontFamily: 'var(--font-heading)',
+              fontWeight: '600',
+            },
+            h4: {
+              fontFamily: 'var(--font-heading)',
+              fontWeight: '500',
+            },
+          },
+        },
+      }),
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // Adding gold and teal theme colors
+        gold: {
+          DEFAULT: "#C6A664",
+          50: "#F5F0E4",
+          100: "#EDE4CC",
+          200: "#E2D1A8",
+          300: "#D7BE84",
+          400: "#CCAC67",
+          500: "#C6A664",
+          600: "#B89759",
+          700: "#A7864D",
+          800: "#8F7442",
+          900: "#6F5A33",
+        },
+        teal: {
+          DEFAULT: "#0D9488",
+          50: "#E6F6F5",
+          100: "#B2E4E0",
+          200: "#66C9C1",
+          300: "#00A99D",
+          400: "#008C82",
+          500: "#0D9488",
+          600: "#0C7F74",
+          700: "#0A6B61",
+          800: "#08564E",
+          900: "#06423B",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
