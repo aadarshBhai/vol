@@ -93,68 +93,7 @@ const TestimonialsSection = () => {
             </div>
           </motion.div>
 
-          {/* Add Review Button */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="mt-12 text-center"
-          >
-            <div className="relative inline-block group">
-              <button 
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-medium rounded-full hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                onClick={toggleDropdown}
-                id="review-button"
-              >
-                Share Your Experience
-              </button>
-              
-              {/* Dropdown Options */}
-              <div 
-                id="review-options" 
-                className="hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden z-10 border border-border/20 review-dropdown"
-              >
-                <a 
-                  href="#" 
-                  className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Handle text review
-                    alert('Text review option clicked');
-                  }}
-                >
-                  <span className="mr-2">✍️</span> Write a Review
-                </a>
-                <a 
-                  href="#" 
-                  className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-t border-border/20"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Handle photo review
-                    alert('Photo review option clicked');
-                  }}
-                >
-                  <span className="mr-2">📷</span> Add Photo Review
-                </a>
-                <a 
-                  href="#" 
-                  className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border-t border-border/20"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Handle video review
-                    alert('Video review option clicked');
-                  }}
-                >
-                  <span className="mr-2">🎥</span> Share Video Review
-                </a>
-              </div>
-            </div>
-            
-            <p className="mt-4 text-sm text-muted-foreground">
-              Help others discover amazing travel experiences
-            </p>
-          </motion.div>
+          {/* Share Your Experience section removed as per request */}
         </div>
       </section>
 

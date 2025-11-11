@@ -7,10 +7,16 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return true;
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
+    return false;
   }
 };
 
-export default connectDB;
+const getDBStatus = () => {
+  return mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+};
+
+export { connectDB, getDBStatus };

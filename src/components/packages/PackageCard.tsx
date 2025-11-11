@@ -95,9 +95,16 @@ const PackageCard = ({ package: pkg, onViewDetails, onBookNow, highlight }: Pack
               </Badge>
             ))}
             {pkg.highlights.length > 3 && (
-              <Badge variant="outline" className="text-xs">
+              <div 
+                className="inline-flex items-center justify-center rounded-full border border-border bg-transparent px-2.5 py-0.5 text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground select-none cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Show all highlights in an alert or modal
+                  alert(`All highlights:\n• ${pkg.highlights.join('\n• ')}`);
+                }}
+              >
                 +{pkg.highlights.length - 3} more
-              </Badge>
+              </div>
             )}
           </div>
         </div>
@@ -128,23 +135,16 @@ const PackageCard = ({ package: pkg, onViewDetails, onBookNow, highlight }: Pack
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              className="w-full"
             >
               <Button
-                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800"
-                onClick={() => onBookNow(pkg)}
+                className="w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white hover:from-[#128C7E] hover:to-[#075E54]"
+                onClick={handleWhatsAppEnquiry}
               >
-                Book Now
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Get Plan on WhatsApp
               </Button>
             </motion.div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleWhatsAppEnquiry}
-              className="w-full text-foreground/70 hover:bg-transparent hover:text-[#25D366]"
-            >
-              <MessageCircle className="mr-2 h-4 w-4" />
-              Enquiry on WhatsApp
-            </Button>
           </div>
         </div>
       </div>

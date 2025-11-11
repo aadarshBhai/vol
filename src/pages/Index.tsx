@@ -4,11 +4,12 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/common/WhatsAppButton";
 import Hero from "@/components/home/Hero";
 import FeaturedDestinations from "@/components/home/FeaturedDestinations";
+import TeamSection from "@/components/home/TeamSection";
+import GallerySection from "@/components/home/GallerySection";
+import TestimonialsSection from "@/components/testimonials/TestimonialsSection";
 import BookingForm from "@/components/booking/BookingForm";
 import PackageCard from "@/components/packages/PackageCard";
 import ItineraryModal from "@/components/packages/ItineraryModal";
-import TeamSection from "@/components/home/TeamSection";
-import TestimonialsSection from "@/components/testimonials/TestimonialsSection";
 import { packages, Package } from "@/lib/mockData";
 import { motion } from "framer-motion";
 
@@ -31,10 +32,16 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Hero Section */}
+      {/* 1. Hero Section */}
       <Hero />
       
-      {/* Why Choose Us Section */}
+      {/* 2. Featured Destinations */}
+      <FeaturedDestinations />
+      
+      {/* 3. About Us (Team) */}
+      <TeamSection />
+      
+      {/* 4. Why Choose Us */}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <motion.div 
@@ -106,10 +113,13 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Team Section */}
-      <TeamSection />
+      {/* 5. Gallery & Experiences */}
+      <GallerySection />
       
-      {/* Booking Form Section */}
+      {/* 6. Trust & Reviews (Testimonials) */}
+      <TestimonialsSection />
+      
+      {/* 7. Contact & Support (Booking Form) */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 text-center mb-12">
           <motion.h2 
@@ -143,12 +153,6 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
-      
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-      
-      {/* Featured Destinations */}
-      <FeaturedDestinations />
       
       {/* Modals */}
       <ItineraryModal

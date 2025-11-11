@@ -273,6 +273,62 @@ export const testimonials: Testimonial[] = [
     review: "Wonderful family vacation! Kids loved the bonfire and adventure activities. Everything was taken care of from start to finish.",
     tripTo: "Manali",
     date: "2024-10-10"
+  },
+  {
+    id: 6,
+    name: "Arjun Patel",
+    rating: 5,
+    review: "The Udaipur package was worth every penny! The boat ride on Lake Pichola at sunset was breathtaking. Will definitely book with Volvoro again.",
+    tripTo: "Udaipur",
+    date: "2024-10-18"
+  },
+  {
+    id: 7,
+    name: "Neha & Rohan",
+    rating: 4,
+    review: "Celebrated our anniversary in Shimla. The candlelight dinner was beautifully arranged. The only minor issue was the slightly delayed pick-up.",
+    tripTo: "Shimla",
+    date: "2024-10-05"
+  },
+  {
+    id: 8,
+    name: "Vikram Singh",
+    rating: 5,
+    review: "As a solo traveler, I was a bit nervous, but the Chopta trek was the best experience of my life! The guide was knowledgeable and the views were spectacular.",
+    tripTo: "Chopta",
+    date: "2024-09-20"
+  },
+  {
+    id: 9,
+    name: "The Kapoor Family",
+    rating: 5,
+    review: "Our kids are still talking about the camel ride in Jaisalmer! The desert camp was comfortable and the cultural show was the highlight of our trip.",
+    tripTo: "Jaisalmer",
+    date: "2024-10-15"
+  },
+  {
+    id: 10,
+    name: "Ananya Reddy",
+    rating: 5,
+    review: "Mussoorie in the rains was magical! The hotel had the best views and the local sightseeing was well-organized. Special thanks to our guide Ramesh!",
+    tripTo: "Mussoorie",
+    date: "2024-09-10"
+  },
+  {
+    id: 11,
+    name: "Rahul Khanna",
+    rating: 4,
+    review: "Great experience overall. The Manali trip was fantastic, though I wish we had more time at Solang Valley. The hotel was excellent with great mountain views.",
+    tripTo: "Manali",
+    date: "2024-10-22"
+  },
+  {
+    id: 12,
+    name: "The Malhotras",
+    rating: 5,
+    review: "Perfect family vacation! The kids loved the toy train ride in Shimla. The hotel was family-friendly and the staff went out of their way to accommodate us.",
+    tripTo: "Shimla",
+    date: "2024-10-08"
   }
 ];
 
