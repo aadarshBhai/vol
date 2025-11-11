@@ -25,7 +25,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     id: 3,
-    name: 'Abhijeet Upadhyay',
+    name: 'Abhineel Upadhyay',
     position: 'Managing Director',
     description: 'Oversees finance, marketing, and booking operations to ensure smooth coordination and efficient execution across all tours. Drives excellence that keeps Volvoro organized, dependable, and focused on delivering exceptional client experiences.',
     image: '/images/destinations/abhi.jpg',

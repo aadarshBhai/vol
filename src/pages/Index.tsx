@@ -7,7 +7,6 @@ import FeaturedDestinations from "@/components/home/FeaturedDestinations";
 import BookingForm from "@/components/booking/BookingForm";
 import PackageCard from "@/components/packages/PackageCard";
 import ItineraryModal from "@/components/packages/ItineraryModal";
-import TestimonialsSection from "@/components/testimonials/TestimonialsSection";
 import TeamSection from "@/components/home/TeamSection";
 import { packages, Package } from "@/lib/mockData";
 import { motion } from "framer-motion";
@@ -34,8 +33,77 @@ const Index = () => {
       {/* Hero Section */}
       <Hero />
       
-      {/* Testimonials Section */}
-      <TestimonialsSection />
+      {/* Why Choose Us Section */}
+      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
+              Why Choose Us
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Experience travel planning at its finest with our exceptional services
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: '24/7',
+                title: "24/7 Customer Support",
+                description: "Round-the-clock assistance for all your travel needs, anytime, anywhere."
+              },
+              {
+                icon: '✈️',
+                title: "Customized Packages",
+                description: "Tailor-made itineraries designed specifically for your preferences and budget."
+              },
+              {
+                icon: '🏨',
+                title: "Verified Partners",
+                description: "Carefully vetted hotels and transportation for your peace of mind."
+              },
+              {
+                icon: '💰',
+                title: "Transparent Pricing",
+                description: "No hidden fees or surprise charges - what you see is what you pay."
+              },
+              {
+                icon: '🔍',
+                title: "No Hidden Charges",
+                description: "Complete cost breakdown before you book, guaranteed."
+              },
+              {
+                icon: '⭐',
+                title: "98-100% Satisfaction",
+                description: "Consistently high ratings from thousands of happy travelers."
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
       
       {/* Team Section */}
       <TeamSection />
@@ -77,40 +145,6 @@ const Index = () => {
       
       {/* Featured Destinations */}
       <FeaturedDestinations />
-      
-      {/* Featured Packages */}
-      <section id="packages" className="container mx-auto px-4 py-20">
-        <div className="mb-12 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-4 text-4xl font-bold"
-          >
-            Popular Packages
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-muted-foreground"
-          >
-            Curated experiences for every type of traveler
-          </motion.p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {packages.slice(0, 6).map((pkg) => (
-            <PackageCard
-              key={pkg.id}
-              package={pkg}
-              onViewDetails={handleViewDetails}
-              onBookNow={handleBookNow}
-            />
-          ))}
-        </div>
-      </section>
       {/* Modals */}
       <ItineraryModal
         package={selectedPackage}

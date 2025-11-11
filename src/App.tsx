@@ -9,7 +9,7 @@ import PlanMyTrip from "./pages/PlanMyTrip";
 import SearchResults from "./pages/SearchResults";
 import SearchPage from "./pages/SearchPage";
 import About from "./pages/About";
-// Authentication routes removed as per user request
+import TPT from "./pages/startbooking";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import NotFound from "./pages/NotFound";
@@ -46,7 +46,7 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       if (!isLoading && !isAuthenticated) {
-        navigate('/login');
+        navigate('/admin/login');
       }
     };
     checkAuth();
@@ -105,7 +105,10 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <AppRoutes />
+          <Routes>
+            <Route path="/startbooking" element={<TPT />} />
+            <Route path="*" element={<AppRoutes />} />
+          </Routes>
           <Toaster />
           <Sonner />
         </AuthProvider>
