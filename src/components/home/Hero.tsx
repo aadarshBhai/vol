@@ -3,7 +3,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 
 const Hero = () => {
   return (
-    <section className="relative h-[600px] w-full overflow-hidden">
+    <section className="relative h-[600px] w-full overflow-hidden select-none">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img

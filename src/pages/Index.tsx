@@ -8,6 +8,7 @@ import BookingForm from "@/components/booking/BookingForm";
 import PackageCard from "@/components/packages/PackageCard";
 import ItineraryModal from "@/components/packages/ItineraryModal";
 import TeamSection from "@/components/home/TeamSection";
+import TestimonialsSection from "@/components/testimonials/TestimonialsSection";
 import { packages, Package } from "@/lib/mockData";
 import { motion } from "framer-motion";
 
@@ -143,8 +144,12 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Testimonials Section */}
+      <TestimonialsSection />
+      
       {/* Featured Destinations */}
       <FeaturedDestinations />
+      
       {/* Modals */}
       <ItineraryModal
         package={selectedPackage}
