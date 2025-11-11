@@ -1,49 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Plane } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const raw = localStorage.getItem("currentUser");
-      const parsed = raw ? JSON.parse(raw) : null;
-      setUser(token && parsed ? parsed : null);
-    } catch {
-      setUser(null);
-    }
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "currentUser" || e.key === "authToken") {
-        try {
-          const token = localStorage.getItem("authToken");
-          const raw = localStorage.getItem("currentUser");
-          const parsed = raw ? JSON.parse(raw) : null;
-          setUser(token && parsed ? parsed : null);
-        } catch {
-          setUser(null);
-        }
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
-
-  const handleLogout = () => {
-    try {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("currentUser");
-    } catch {}
-    setUser(null);
-    setIsOpen(false);
-    navigate("/");
-  };
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -57,15 +19,18 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-gold-200 bg-white/90 backdrop-blur-lg">
       <div className="container mx-auto flex h-20 items-center justify-between px-4">
-        {/* Logo */}
-        <Link to="/" className="group flex items-center gap-2 font-bold text-foreground">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-800 p-2">
-            <Plane className="h-5 w-5 text-white transition-transform duration-300 group-hover:rotate-12" />
-          </div>
-          <span className="bg-gradient-to-r from-teal-800 to-gold-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
-            VolvoRo
-          </span>
-        </Link>
+       {/* Logo */}
+<Link to="/" className="flex items-center gap-3">
+  <img
+    src="/logo.jpg"
+    alt="VolvoRo Logo"
+    className="h-10 w-10 rounded-full object-cover shadow-md hover:scale-105 transition-transform duration-300"
+  />
+  <span className="bg-gradient-to-r from-teal-800 to-gold-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
+    VolvoRo
+  </span>
+</Link>
+
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-6 md:flex">
@@ -82,43 +47,6 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
-          {user ? (
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleLogout}
-                className="border-gold-400 text-gold-700 hover:bg-gold-50 hover:text-gold-800"
-              >
-                Logout
-              </Button>
-              <Button 
-                size="sm" 
-                asChild
-                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md hover:from-teal-700 hover:to-teal-800"
-              >
-                <Link to="/profile">Dashboard</Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                asChild
-                className="border-gold-400 text-gold-700 hover:bg-gold-50 hover:text-gold-800"
-              >
-                <Link to="/login">Login</Link>
-              </Button>
-              <Button 
-                size="sm" 
-                asChild
-                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md hover:from-teal-700 hover:to-teal-800"
-              >
-                <Link to="/register">Sign Up</Link>
-              </Button>
-            </div>
-          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -156,47 +84,6 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              <div className="mt-2 border-t border-gold-100 pt-3">
-                {user ? (
-                  <>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start text-gold-700 hover:bg-gold-50 hover:text-gold-800" 
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Button>
-                    <Button 
-                      className="mt-2 w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800" 
-                      asChild
-                    >
-                      <Link to="/profile" onClick={() => setIsOpen(false)}>
-                        Dashboard
-                      </Link>
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start text-gold-700 hover:bg-gold-50 hover:text-gold-800" 
-                      asChild
-                    >
-                      <Link to="/login" onClick={() => setIsOpen(false)}>
-                        Login
-                      </Link>
-                    </Button>
-                    <Button 
-                      className="mt-2 w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white hover:from-teal-700 hover:to-teal-800" 
-                      asChild
-                    >
-                      <Link to="/register" onClick={() => setIsOpen(false)}>
-                        Sign Up
-                      </Link>
-                    </Button>
-                  </>
-                )}
-              </div>
             </div>
           </motion.div>
         )}

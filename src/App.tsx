@@ -9,15 +9,10 @@ import PlanMyTrip from "./pages/PlanMyTrip";
 import SearchResults from "./pages/SearchResults";
 import SearchPage from "./pages/SearchPage";
 import About from "./pages/About";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+// Authentication routes removed as per user request
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import NotFound from "./pages/NotFound";
-import RequireAuth from "@/components/auth/RequireAuth";
-import Profile from "./pages/Profile";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
@@ -87,21 +82,6 @@ const AppRoutes = () => (
         }
       />
       <Route path="/about" element={<About />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/register" element={<Navigate to="/signup" replace />} />
-      <Route
-        path="/profile"
-        element={
-          <ErrorBoundary>
-            <AuthWrapper>
-              <Profile />
-            </AuthWrapper>
-          </ErrorBoundary>
-        }
-      />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
       
       {/* Admin Routes */}
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
