@@ -10,7 +10,18 @@ const connectDB = async (retryCount = 0) => {
     }
     
     console.log('🔍 Attempting to connect to MongoDB...');
-    console.log(`   Using URI: ${process.env.MONGODB_URI.replace(/:([^@]+)@/, ':***@')}`);
+    console.log(`   Using URI: ${process.env.MONGODB_URI ? 
+      process.env.MONGODB_URI.replace(/:([^@]+)@/, ':***@') : 
+      'MONGODB_URI is not set'}`);
+    
+    if (!process.env.MONGODB_URI) {
+      console.error('❌ MONGODB_URI is not set in environment variables');
+      return false;
+    }
+    
+    if (!process.env.MONGODB_URI.includes('mongodb+srv://')) {
+      console.warn('⚠️  MONGODB_URI does not appear to be a MongoDB Atlas connection string');
+    }
     
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,

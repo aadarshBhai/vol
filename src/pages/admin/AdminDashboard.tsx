@@ -1,25 +1,329 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Plane, Package, Users, FileText, MapPin, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Plane, Package, Users, FileText, MapPin, LogOut, 
+  Plus, ArrowLeft, ArrowRight, Check, X, Calendar, 
+  DollarSign, Map, Users as UsersIcon, Briefcase, 
+  CheckCircle, XCircle, Building2, Presentation, 
+  Languages, Wifi, Utensils, Dumbbell, WashingMachine,
+  Sun, Moon, Coffee, WifiOff, Tv, Wind, Droplets, CircleDashed, Flag, Mountain, GitBranch, Circle, Table2, Film,
+  Waves, ParkingCircle, Snowflake, ShowerHead, 
+  Shirt, ShoppingCart, Smartphone, Smile, Star,
+  Ticket, Train, TreePine, Umbrella, UtensilsCrossed,
+  Volume2, VolumeX, Watch, Wrench, XCircle as XCircleIcon,
+  Zap, ZoomIn, ZoomOut, Bike, BookOpen, Activity, PawPrint, 
+  Mic, Hand, Music, Car, type LucideIcon
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { packages as demoPackages, bookings } from "@/lib/mockData";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+// Define amenity options with icons
+const amenityIcons: Record<string, LucideIcon> = {
+  'wifi': Wifi,
+  'restaurant': Utensils,
+  'swimming_pool': Waves,
+  'gym': Dumbbell,
+  'parking': ParkingCircle,
+  'air_conditioning': Snowflake,
+  'laundry': WashingMachine,
+  'spa': Droplets,
+  'bar': Coffee,
+  'airport_shuttle': Train,
+  'business_center': Briefcase,
+  'concierge': UsersIcon,
+  'fitness_center': Dumbbell,
+  'meeting_rooms': Presentation,
+  'room_service': UtensilsCrossed,
+  'sauna': ShowerHead,
+  'shopping': ShoppingCart,
+  'smoking_area': XCircleIcon,
+  'wheelchair_accessible': Users,
+  'beach_access': Sun,
+  'bicycle_rental': Bike,
+  'garden': TreePine,
+  'library': BookOpen,
+  'sun_deck': Sun,
+  'terrace': Sun,
+  'water_park': Waves,
+  'water_sports': Waves,
+  'water_slide': Waves,
+  'yoga': Activity,
+  'zoo': PawPrint,
+  'aqua_park': Waves,
+  'beach': Waves,
+  'bowling': CircleDashed,  // Using CircleDashed as a placeholder for bowling
+  'casino': DollarSign,
+  'diving': Waves,
+  'fishing': Waves,         // Using Waves as a placeholder for fishing
+  'golf_course': Flag,      // Using Flag as a placeholder for golf
+  'hiking': Mountain,       // Using Mountain as a placeholder for hiking
+  'horse_riding': GitBranch, // Using GitBranch as a placeholder for horse riding
+  'hot_spring': Droplets,
+  'karaoke': Mic,
+  'kids_club': Users,
+  'massage': Hand,
+  'mini_golf': Flag,        // Using Flag as a placeholder for mini golf
+  'nightclub': Music,
+  'outdoor_pool': Waves,
+  'pool_bar': Coffee,
+  'private_beach': Waves,
+  'scuba_diving': Waves,
+  'shuttle_service': Car,
+  'squash': Circle,         // Using Circle as a placeholder for squash
+  'tennis_court': Table2,   // Using Table2 as a placeholder for tennis court
+  'theater': Film,          // Using Film as a placeholder for theater
+  'windsurfing': Wind
+};
+
+type PackageType = "Family" | "Couple" | "Solo" | "Corporate" | "";
+
+interface CorporateOptions {
+  meetingRooms: boolean;
+  teamBuilding: boolean;
+  customBranding: boolean;
+  maxCapacity: number;
+  amenities: string[];
+  specialRequirements: string;
+}
+
+interface ItineraryItem {
+  day: number;
+  title: string;
+  description: string;
+  meals?: string[];
+  activities?: string[];
+  accommodation?: string;
+}
+
+interface PackageFormData {
+  id?: string;
+  destination: string;
+  duration: string;
+  type: PackageType;
+  price: string;
+  image?: string;
+  description: string;
+  isFeatured: boolean;
+  inclusions: string[];
+  exclusions: string[];
+  highlights: string[];
+  startDate?: string;
+  endDate?: string;
+  groupSize: {
+    min: number;
+    max: number;
+  };
+  difficulty: 'Easy' | 'Moderate' | 'Challenging' | 'Extreme' | '';
+  bestTimeToVisit: string[];
+  cancellationPolicy: string;
+  termsAndConditions: string;
+  corporateOptions?: CorporateOptions;
+}
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [usersList, setUsersList] = useState<Array<{ _id: string; name: string; email: string; phone?: string }>>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [pkgList, setPkgList] = useState<any[]>([]);
-  const [loadingPkgs, setLoadingPkgs] = useState(false);
-  const [form, setForm] = useState<{ id?: string; destination: string; duration: string; type: "Family"|"Couple"|"Solo"|""; price: string; image?: string }>(
-    { destination: "", duration: "", type: "", price: "" }
-  );
-  const [itinerary, setItinerary] = useState<Array<{ day: number; title: string; description: string }>>([]);
-  const [rawItineraryText, setRawItineraryText] = useState<string>("");
   const [savingPkg, setSavingPkg] = useState(false);
+  const [loadingPkgs, setLoadingPkgs] = useState(false);
+  // Default form values
+  const defaultFormValues: PackageFormData = { 
+    destination: "", 
+    duration: "", 
+    type: "", 
+    price: "",
+    description: "",
+    isFeatured: false,
+    inclusions: [],
+    exclusions: [],
+    highlights: [],
+    groupSize: { min: 1, max: 10 },
+    difficulty: '',
+    bestTimeToVisit: [],
+    cancellationPolicy: '',
+    termsAndConditions: '',
+    corporateOptions: {
+      meetingRooms: false,
+      teamBuilding: false,
+      customBranding: false,
+      maxCapacity: 0,
+      amenities: [],
+      specialRequirements: ''
+    }
+  };
+  
+  // Form state for multi-step package creation
+  const [form, setForm] = useState<PackageFormData>({ 
+    destination: "", 
+    duration: "", 
+    type: "", 
+    price: "",
+    description: "",
+    isFeatured: false,
+    inclusions: [],
+    exclusions: [],
+    highlights: [],
+    groupSize: { min: 1, max: 10 },
+    difficulty: '',
+    bestTimeToVisit: [],
+    cancellationPolicy: "",
+    termsAndConditions: ""
+  }); // Form steps state
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [newHighlight, setNewHighlight] = useState('');
+  const [newInclusion, setNewInclusion] = useState('');
+  const [newExclusion, setNewExclusion] = useState('');
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Form validation function
+  const validateStep = (step: number): boolean => {
+    const errors: Record<string, string> = {};
+    
+    switch (step) {
+      case 1: // Basic Info
+        if (!form.destination.trim()) errors.destination = 'Destination is required';
+        if (!form.duration.trim()) errors.duration = 'Duration is required';
+        if (!form.type) errors.type = 'Package type is required';
+        if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0) 
+          errors.price = 'Valid price is required';
+        if (!form.description.trim()) errors.description = 'Description is required';
+        break;
+        
+      case 2: // Itinerary
+        if (itinerary.length === 0) errors.itinerary = 'At least one itinerary item is required';
+        break;
+        
+      case 3: // Inclusions/Exclusions
+        if (form.inclusions.length === 0) errors.inclusions = 'At least one inclusion is required';
+        if (form.exclusions.length === 0) errors.exclusions = 'At least one exclusion is required';
+        break;
+        
+      case 4: // Corporate Options (if applicable)
+        if (form.type === 'Corporate') {
+          if (form.corporateOptions?.maxCapacity <= 0) 
+            errors.maxCapacity = 'Maximum capacity must be greater than 0';
+        }
+        break;
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+  
+  // Handle next step
+  const nextStep = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, 4));
+    }
+  };
+  
+  // Handle previous step
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+  
+  // Add highlight
+  const addHighlight = () => {
+    if (newHighlight.trim() && !form.highlights.includes(newHighlight.trim())) {
+      setForm(prev => ({
+        ...prev,
+        highlights: [...prev.highlights, newHighlight.trim()]
+      }));
+      setNewHighlight('');
+    }
+  };
+  
+  // Remove highlight
+  const removeHighlight = (index: number) => {
+    setForm(prev => ({
+      ...prev,
+      highlights: prev.highlights.filter((_, i) => i !== index)
+    }));
+  };
+  
+  // Add inclusion
+  const addInclusion = () => {
+    if (newInclusion.trim() && !form.inclusions.includes(newInclusion.trim())) {
+      setForm(prev => ({
+        ...prev,
+        inclusions: [...prev.inclusions, newInclusion.trim()]
+      }));
+      setNewInclusion('');
+    }
+  };
+  
+  // Remove inclusion
+  const removeInclusion = (index: number) => {
+    setForm(prev => ({
+      ...prev,
+      inclusions: prev.inclusions.filter((_, i) => i !== index)
+    }));
+  };
+  
+  // Add exclusion
+  const addExclusion = () => {
+    if (newExclusion.trim() && !form.exclusions.includes(newExclusion.trim())) {
+      setForm(prev => ({
+        ...prev,
+        exclusions: [...prev.exclusions, newExclusion.trim()]
+      }));
+      setNewExclusion('');
+    }
+  };
+  
+  // Remove exclusion
+  const removeExclusion = (index: number) => {
+    setForm(prev => ({
+      ...prev,
+      exclusions: prev.exclusions.filter((_, i) => i !== index)
+    }));
+  };
+  
+  // Toggle amenity
+  const toggleAmenity = (amenity: string) => {
+    setForm(prev => {
+      const currentAmenities = prev.corporateOptions?.amenities || [];
+      const updatedAmenities = currentAmenities.includes(amenity)
+        ? currentAmenities.filter(a => a !== amenity)
+        : [...currentAmenities, amenity];
+        
+      return {
+        ...prev,
+        corporateOptions: {
+          ...prev.corporateOptions!,
+          amenities: updatedAmenities
+        }
+      };
+    });
+  };
+  
+  // Reset form to default values
+  const resetForm = () => {
+    setForm({ ...defaultFormValues });
+    setItinerary([]);
+    setCurrentStep(1);
+    setFormErrors({});
+    setNewHighlight('');
+    setNewInclusion('');
+    setNewExclusion('');
+    setSelectedAmenities([]);
+  };
+  
+  const [itinerary, setItinerary] = useState<ItineraryItem[]>([]);
+  const [rawItineraryText, setRawItineraryText] = useState<string>("");
   const navigate = useNavigate();
 
   // Check authentication on component mount and when active tab changes
@@ -116,46 +420,139 @@ const AdminDashboard = () => {
     return items;
   }
 
-  async function savePackage() {
+  // Save package function
+  const savePackage = async () => {
     try {
-      setSavingPkg(true);
+      setIsLoading(true);
+      
+      // Validate all steps before saving
+      if (!validateStep(1) || !validateStep(2) || !validateStep(3) || 
+          (form.type === 'Corporate' && !validateStep(4))) {
+        toast.error('Please fix all validation errors before saving');
+        return;
+      }
+      
       const isEdit = !!form.id;
-      const derived = itinerary.length ? itinerary : parseRawItinerary(rawItineraryText);
+      const derivedItinerary = itinerary.length ? itinerary : parseRawItinerary(rawItineraryText);
+      
+      // Prepare the package payload
       const payload: any = {
-        destination: form.destination,
-        duration: form.duration,
-        type: form.type,
+        ...form,
         price: Number(form.price),
-        image: form.image || "",
-        itinerary: derived,
+        itinerary: derivedItinerary,
+        ...(form.type === 'Corporate' ? {
+          corporateOptions: form.corporateOptions
+        } : {})
       };
+      
+      // Remove undefined or empty fields
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === undefined || payload[key] === '') {
+          delete payload[key];
+        }
+      });
+      
       const API = import.meta.env.VITE_API_URL || "";
       const url = isEdit ? `${API}/api/packages/${form.id}` : `${API}/api/packages`;
       const method = isEdit ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Failed to save package");
-      if (isEdit) {
-        setPkgList((prev) => prev.map((p) => (p._id === data.package._id ? data.package : p)));
-      } else {
-        setPkgList((prev) => [data.package, ...prev]);
+      
+      const response = await fetch(url, { 
+        method, 
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }, 
+        body: JSON.stringify(payload) 
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.message || "Failed to save package");
       }
-      setForm({ destination: "", duration: "", type: "", price: "" });
-      setItinerary([]);
-    } catch (e) {
+      
+      const data = await response.json();
+      
+      // Update the package list
+      if (isEdit) {
+        setPkgList(prev => prev.map(p => p._id === data.package._id ? data.package : p));
+        toast.success('Package updated successfully');
+      } else {
+        setPkgList(prev => [data.package, ...prev]);
+        toast.success('Package created successfully');
+      }
+      
+      // Reset form after successful save
+      resetForm();
+      
+    } catch (error) {
+      console.error('Error saving package:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to save package');
     } finally {
-      setSavingPkg(false);
+      setIsLoading(false);
     }
-  }
+  };
 
+  // Edit package function
+  const editPackage = (pkg: any) => {
+    // Map the package data to our form state
+    const formData: PackageFormData = {
+      ...defaultFormValues,
+      id: pkg._id,
+      destination: pkg.destination || '',
+      duration: pkg.duration || '',
+      type: pkg.type as PackageType || '',
+      price: pkg.price?.toString() || '',
+      image: pkg.image || '',
+      description: pkg.description || '',
+      isFeatured: pkg.isFeatured || false,
+      highlights: Array.isArray(pkg.highlights) ? pkg.highlights : [],
+      inclusions: Array.isArray(pkg.inclusions) ? pkg.inclusions : [],
+      exclusions: Array.isArray(pkg.exclusions) ? pkg.exclusions : [],
+      groupSize: pkg.groupSize || { min: 1, max: 10 },
+      difficulty: pkg.difficulty || '',
+      bestTimeToVisit: Array.isArray(pkg.bestTimeToVisit) ? pkg.bestTimeToVisit : [],
+      cancellationPolicy: pkg.cancellationPolicy || '',
+      termsAndConditions: pkg.termsAndConditions || '',
+      corporateOptions: pkg.type === 'Corporate' ? {
+        meetingRooms: pkg.corporateOptions?.meetingRooms || false,
+        teamBuilding: pkg.corporateOptions?.teamBuilding || false,
+        customBranding: pkg.corporateOptions?.customBranding || false,
+        maxCapacity: pkg.corporateOptions?.maxCapacity || 0,
+        amenities: Array.isArray(pkg.corporateOptions?.amenities) 
+          ? pkg.corporateOptions.amenities 
+          : [],
+        specialRequirements: pkg.corporateOptions?.specialRequirements || ''
+      } : defaultFormValues.corporateOptions
+    };
+    
+    setForm(formData);
+    setItinerary(Array.isArray(pkg.itinerary) ? pkg.itinerary : []);
+    setActiveTab("packages");
+    setCurrentStep(1); // Reset to first step when editing
+    
+    // Scroll to the form for better UX
+    setTimeout(() => {
+      document.getElementById('package-form')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  // Delete package function
   async function deletePackage(id: string) {
     try {
       const API = import.meta.env.VITE_API_URL || "";
-      const res = await fetch(`${API}/api/packages/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API}/api/packages/${id}`, { 
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message || "Failed to delete package");
       setPkgList((prev) => prev.filter((p) => p._id !== id));
-    } catch (e) {
+      toast.success('Package deleted successfully');
+    } catch (error) {
+      console.error('Error deleting package:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to delete package');
     }
   }
 
@@ -187,10 +584,27 @@ const AdminDashboard = () => {
   }, [activeTab]);
 
   const stats = [
-    { id: "packages", title: "Total Packages", value: pkgList.length, icon: Package },
-    { id: "users", title: "Total Users", value: usersList.length, icon: Users },
-    { id: "bookings", title: "Total Bookings", value: bookings.length, icon: FileText },
-    { id: "destinations", title: "Destinations", value: new Set(pkgList.map(pkg => pkg.destination)).size, icon: MapPin },
+    { 
+      id: "packages", 
+      title: "Total Packages", 
+      value: pkgList.length, 
+      icon: Package,
+      description: "Manage your travel packages"
+    },
+    { 
+      id: "bookings", 
+      title: "Total Bookings", 
+      value: bookings.length, 
+      icon: FileText,
+      description: "View and manage bookings"
+    },
+    { 
+      id: "destinations", 
+      title: "Destinations", 
+      value: new Set(pkgList.map(pkg => pkg.destination)).size, 
+      icon: MapPin,
+      description: "Explore all destinations"
+    },
   ];
 
   const handleStatClick = (tabId: string) => {
@@ -199,20 +613,62 @@ const AdminDashboard = () => {
     document.getElementById('dashboard-tabs')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="border-b border-border bg-card">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
+      <motion.header 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
+        className="border-b border-border/40 bg-background/80 backdrop-blur-sm"
+      >
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold text-primary">
-            <Plane className="h-6 w-6" />
-            <span>Volvoro Admin</span>
+          <Link to="/" className="group flex items-center gap-2">
+            <motion.div
+              whileHover={{ rotate: -20, scale: 1.1 }}
+              className="flex items-center gap-2"
+            >
+              <Plane className="h-6 w-6 text-primary" />
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                Volvoro Admin
+              </span>
+            </motion.div>
           </Link>
-          <Button variant="outline" size="sm" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleLogout}
+            className="group flex items-center gap-1.5 border-border/50 hover:border-primary/30 hover:bg-primary/5"
+          >
+            <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+            <span>Logout</span>
           </Button>
         </div>
-      </header>
+      </motion.header>
 
       <div className="container mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
@@ -349,7 +805,22 @@ const AdminDashboard = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => {
-                            setForm({ destination: "", duration: "", type: "", price: "" });
+                            setForm({ 
+                              destination: "", 
+                              duration: "", 
+                              type: "", 
+                              price: "",
+                              description: "",
+                              isFeatured: false,
+                              inclusions: [],
+                              exclusions: [],
+                              highlights: [],
+                              groupSize: { min: 1, max: 10 },
+                              difficulty: '',
+                              bestTimeToVisit: [],
+                              cancellationPolicy: "",
+                              termsAndConditions: ""
+                            });
                             setItinerary([]);
                           }}
                         >
@@ -421,7 +892,24 @@ const AdminDashboard = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setForm({ id: pkg._id, destination: pkg.destination, duration: pkg.duration, type: pkg.type, price: String(pkg.price), image: pkg.image || "" });
+                            setForm({
+                              id: pkg._id,
+                              destination: pkg.destination,
+                              duration: pkg.duration,
+                              type: pkg.type,
+                              price: String(pkg.price),
+                              image: pkg.image || "",
+                              description: pkg.description || "",
+                              isFeatured: pkg.isFeatured || false,
+                              inclusions: pkg.inclusions || [],
+                              exclusions: pkg.exclusions || [],
+                              highlights: pkg.highlights || [],
+                              groupSize: pkg.groupSize || { min: 1, max: 10 },
+                              difficulty: pkg.difficulty || '',
+                              bestTimeToVisit: pkg.bestTimeToVisit || [],
+                              cancellationPolicy: pkg.cancellationPolicy || "",
+                              termsAndConditions: pkg.termsAndConditions || ""
+                            });
                             setItinerary(Array.isArray(pkg.itinerary) ? pkg.itinerary : []);
                             setActiveTab("packages");
                           }}

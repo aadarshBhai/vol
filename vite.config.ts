@@ -6,8 +6,8 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   define: {
-    'import.meta.env.VITE_ADMIN_EMAIL': JSON.stringify(process.env.ADMIN_EMAIL || 'admin@gmail.com'),
-    'import.meta.env.VITE_ADMIN_PASSWORD': JSON.stringify(process.env.ADMIN_PASSWORD || 'Aa12Aa12'),
+    'import.meta.env.VITE_ADMIN_EMAIL': JSON.stringify(process.env.VITE_ADMIN_EMAIL || 'thevolvoro@gmail.com'),
+    'import.meta.env.VITE_ADMIN_PASSWORD': JSON.stringify(process.env.VITE_ADMIN_PASSWORD || 'Aa12Aa12'),
   },
   server: {
     host: "::",

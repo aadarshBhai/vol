@@ -53,13 +53,6 @@ export default function BookingModal({ isOpen, onClose, presetDestination }: Boo
   }, [isOpen, presetDestination]);
 
   const submit = () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      const current = encodeURIComponent(window.location.pathname);
-      window.location.href = `/login?redirect=${current}`;
-      onClose();
-      return;
-    }
     if (!form.name || !form.phone || !form.destination || !form.travelers || !form.tripType) return;
     const text = encodeURIComponent(
       [

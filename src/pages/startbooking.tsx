@@ -255,16 +255,61 @@ const DreamTripForm: React.FC = (): JSX.Element => {
     const newErrors: Record<string, string> = {};
     
     if (currentStep === 0) {
-      if (!formData.from.trim()) newErrors.from = 'From location is required';
-      if (!formData.to.trim()) newErrors.to = 'To location is required';
-      if (!formData.budget) newErrors.budget = 'Budget is required';
+      // Validate From field
+      if (!formData.from.trim()) {
+        newErrors.from = 'From location is required';
+      } else if (formData.from.trim().length < 2) {
+        newErrors.from = 'Please enter a valid location';
+      }
+      
+      // Validate To field
+      if (!formData.to.trim()) {
+        newErrors.to = 'To location is required';
+      } else if (formData.to.trim().length < 2) {
+        newErrors.to = 'Please enter a valid location';
+      }
+      
+      // Validate Budget field
+      if (!formData.budget) {
+        newErrors.budget = 'Budget is required';
+      } else if (!/^\d+$/.test(formData.budget)) {
+        newErrors.budget = 'Please enter a valid number';
+      } else if (parseInt(formData.budget) < 100) {
+        newErrors.budget = 'Minimum budget is ₹100';
+      }
     } 
     else if (currentStep === 1) {
-      if (!formData.departureDate) newErrors.departureDate = 'Departure date is required';
-      if (!formData.returnDate) newErrors.returnDate = 'Return date is required';
+      // Date validations
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (!formData.departureDate) {
+        newErrors.departureDate = 'Departure date is required';
+      } else if (new Date(formData.departureDate) < today) {
+        newErrors.departureDate = 'Departure date cannot be in the past';
+      }
+      
+      if (!formData.returnDate) {
+        newErrors.returnDate = 'Return date is required';
+      } else if (formData.departureDate && new Date(formData.returnDate) < new Date(formData.departureDate)) {
+        newErrors.returnDate = 'Return date cannot be before departure date';
+      }
+      
+      // Time validations
       if (!formData.departureTime) newErrors.departureTime = 'Departure time is required';
       if (!formData.returnTime) newErrors.returnTime = 'Return time is required';
-      if (!formData.people) newErrors.people = 'Number of people is required';
+      
+      // People validation
+      if (!formData.people) {
+        newErrors.people = 'Number of people is required';
+      } else if (!/^\d+$/.test(formData.people.toString())) {
+        newErrors.people = 'Please enter a valid number';
+      } else if (parseInt(formData.people.toString()) < 1) {
+        newErrors.people = 'At least 1 person is required';
+      } else if (parseInt(formData.people.toString()) > 50) {
+        newErrors.people = 'Maximum 50 people allowed';
+      }
+      
       if (!formData.travelType) newErrors.travelType = 'Travel type is required';
     }
     
@@ -284,7 +329,18 @@ const DreamTripForm: React.FC = (): JSX.Element => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    // Special handling for numeric fields
+    if (name === 'budget' || name === 'people') {
+      // Only allow numbers
+      if (value !== '' && !/^\d*$/.test(value)) {
+        return; // Don't update if not a number
+      }
+    }
+
+    // Update form data
     setFormData(prev => ({ ...prev, [name]: value }));
+    
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => {
@@ -294,52 +350,45 @@ const DreamTripForm: React.FC = (): JSX.Element => {
       });
     }
   };
-
-  const handleBookNow = () => {
-    // Format dates for better readability
-    const formatDate = (dateStr: string) => {
-      if (!dateStr) return '';
-      const options: Intl.DateTimeFormatOptions = { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric',
-        weekday: 'short'
-      };
-      return new Date(dateStr).toLocaleDateString('en-IN', options);
+const handleBookNow = () => {
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      weekday: 'short'
     };
-
-    // Format time (HH:MM to 12-hour format)
-    const formatTime = (timeStr: string) => {
-      if (!timeStr) return '';
-      const [hours, minutes] = timeStr.split(':');
-      const hour = parseInt(hours);
-      return hour > 12 
-        ? `${hour - 12}:${minutes} PM` 
-        : `${hour}:${minutes} AM`;
-    };
-
-    // Create a clean, professional message
-    const message = `*✈️ NEW TRIP BOOKING*%0A%0A` +
-      `*From:* ${formData.from}%0A` +
-      `*To:* ${formData.to}%0A` +
-      `*Travel Type:* ${formData.travelType}%0A` +
-      `*People:* ${formData.people}%0A%0A` +
-      `*📅 Departure:* ${formatDate(formData.departureDate)} at ${formatTime(formData.departureTime)}%0A` +
-      `*🛬 Return:* ${formatDate(formData.returnDate)} at ${formatTime(formData.returnTime)}%0A%0A` +
-      `*💰 Budget:* ₹${formData.budget}%0A` +
-      `*🍽️ Food:* ${formData.food || 'Any'}%0A` +
-      `*🚗 Transport:* ${formData.transport || 'Any'}%0A` +
-      `*🏄 Activities:* ${formData.activities || 'Open to suggestions'}`;
-
-    // Phone number in international format without spaces or special characters
-    const whatsappNumber = '918434903291';
-    
-    // Encode the entire message for URL
-    const encodedMessage = encodeURIComponent(message);
-    
-    // Open WhatsApp with the pre-filled message
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+    return new Date(dateStr).toLocaleDateString('en-IN', options);
   };
+
+  const formatTime = (timeStr: string) => {
+    if (!timeStr) return '';
+    const [hours, minutes] = timeStr.split(':');
+    const hour = parseInt(hours);
+    return hour > 12 
+      ? `${hour - 12}:${minutes} PM` 
+      : `${hour}:${minutes} AM`;
+  };
+
+  // 👇 Use raw text with %0A line breaks (no encodeURIComponent)
+  const message = `*✈️ NEW TRIP BOOKING*%0A%0A` +
+    `*From:* ${formData.from}%0A` +
+    `*To:* ${formData.to}%0A` +
+    `*Travel Type:* ${formData.travelType}%0A` +
+    `*People:* ${formData.people}%0A%0A` +
+    `*📅 Departure:* ${formatDate(formData.departureDate)} at ${formatTime(formData.departureTime)}%0A` +
+    `*🛬 Return:* ${formatDate(formData.returnDate)} at ${formatTime(formData.returnTime)}%0A%0A` +
+    `*💰 Budget:* ₹${formData.budget}%0A` +
+    `*🍽️ Food:* ${formData.food || 'Any'}%0A` +
+    `*🚗 Transport:* ${formData.transport || 'Any'}%0A` +
+    `*🏄 Activities:* ${formData.activities || 'Open to suggestions'}`;
+
+  const whatsappNumber = '918434903291';
+
+  // ✅ Don’t re-encode the message again
+  window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+};
 
   const OptionSelector: React.FC<{ options: Option[]; field: string }> = ({ options, field }) => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginTop: '10px' }}>

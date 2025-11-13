@@ -3,188 +3,123 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { Eye, EyeOff } from "lucide-react";
 
-const AdminLogin = () => {
-  const [loading, setLoading] = useState(false);
+export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isFocused, setIsFocused] = useState({
-    email: false,
-    password: false
-  });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@example.com';
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
-    }
+    setIsLoading(true);
 
-    setLoading(true);
+    // Debug: Log environment variables
+    console.log('Environment variables:', {
+      VITE_ADMIN_EMAIL: import.meta.env.VITE_ADMIN_EMAIL,
+      VITE_ADMIN_PASSWORD: import.meta.env.VITE_ADMIN_PASSWORD ? '***' : 'Not set'
+    });
+    
+    // Debug: Log entered credentials (don't log actual password in production)
+    console.log('Login attempt with:', { email, password: '***' });
+
     try {
-      const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || process.env.ADMIN_EMAIL;
-      const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
-
-      if (email !== adminEmail || password !== adminPassword) {
-        throw new Error("Invalid admin credentials");
+      // Get credentials from environment variables
+      const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'admin@example.com';
+      const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+      
+      console.log('Comparing with:', { 
+        expectedEmail: adminEmail, 
+        emailMatch: email === adminEmail,
+        passwordMatch: password === adminPassword 
+      });
+      
+      if (email === adminEmail && password === adminPassword) {
+        // Store admin token in localStorage
+        localStorage.setItem("adminToken", "dummy-admin-token");
+        toast({
+          title: "Login successful",
+          description: "Redirecting to dashboard...",
+        });
+        navigate("/admin/dashboard");
+      } else {
+        throw new Error("Invalid email or password");
       }
-
-      // Generate a simple token (in a real app, use JWT from the server)
-      const token = `admin-${Date.now()}`;
-      
-      // Store the token in localStorage
-      localStorage.setItem("adminToken", token);
-      localStorage.setItem(
-        "adminUser", 
-        JSON.stringify({ 
-          email: adminEmail,
-          name: "Admin",
-          role: "admin" 
-        })
-      );
-      
-      toast.success("Admin login successful");
-      // Redirect to admin dashboard
-      navigate("/admin/dashboard");
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error(error instanceof Error ? error.message : "Login failed");
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Invalid credentials",
+      });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-          <div className="text-center mb-8">
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-50 mb-4">
-              <Lock className="h-8 w-8 text-indigo-600" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access the admin dashboard
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Admin Portal</h2>
-            <p className="mt-2 text-sm text-gray-600">Sign in to access the dashboard</p>
-          </div>
-          
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </Label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className={cn(
-                      "pl-10 w-full transition-all duration-200",
-                      isFocused.email ? "border-indigo-500 ring-1 ring-indigo-500" : "border-gray-300"
-                    )}
-                    placeholder="admin@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onFocus={() => setIsFocused(prev => ({ ...prev, email: true }))}
-                    onBlur={() => setIsFocused(prev => ({ ...prev, email: false }))}
-                  />
-                </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
               </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password
-                  </Label>
-                </div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    className={cn(
-                      "pl-10 pr-10 w-full transition-all duration-200",
-                      isFocused.password ? "border-indigo-500 ring-1 ring-indigo-500" : "border-gray-300"
-                    )}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onFocus={() => setIsFocused(prev => ({ ...prev, password: true }))}
-                    onBlur={() => setIsFocused(prev => ({ ...prev, password: false }))}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
             </div>
-
-            <div>
-              <Button
-                type="submit"
-                className={cn(
-                  "group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md transition-all duration-200",
-                  loading && "opacity-80 cursor-not-allowed"
-                )}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                      <Lock className="h-5 w-5 text-indigo-200 group-hover:text-indigo-100" />
-                    </span>
-                    Sign in
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-          
-          <div className="mt-6 text-center text-sm">
-            <p className="text-gray-500">
-              For security reasons, please do not share your credentials.
-            </p>
-          </div>
-        </div>
-      </motion.div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
-};
-
-export default AdminLogin;
+}

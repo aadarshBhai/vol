@@ -7,10 +7,10 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 1. Load environment variables from the root .env file
-const envPath = path.resolve(process.cwd(), ".env");
+// 1. Load environment variables from the backend/.env file
+const envPath = path.resolve(__dirname, '.env');
 console.log(`🔍 Loading environment variables from: ${envPath}`);
-dotenv.config({ path: envPath });
+dotenv.config({ path: envPath, override: true });
 
 // 2. Now import other dependencies
 import express from "express";
@@ -26,7 +26,7 @@ import uploadRoutes from "./routes/uploads.js";
 console.log('✅ Environment variables loaded successfully');
 console.log(`- NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
 console.log(`- MONGODB_URI: ${process.env.MONGODB_URI ? 'Set' : 'Not set'}`);
-dotenv.config({ path: envPath });
+console.log(`- MONGODB_URI starts with: ${process.env.MONGODB_URI?.substring(0, 30)}...`);
 
 // Verify environment variables
 const requiredEnvVars = ["MONGODB_URI", "JWT_SECRET"];

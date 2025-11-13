@@ -25,12 +25,6 @@ const Packages = () => {
   };
 
   const handleBookNow = (pkg: Package) => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      const current = encodeURIComponent(window.location.pathname);
-      navigate(`/login?redirect=${current}`);
-      return;
-    }
     setSelectedPackage(pkg);
     setIsBookingOpen(true);
   };
