@@ -51,7 +51,7 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-bold text-black">
               Why Choose Us
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">

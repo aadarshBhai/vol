@@ -3,10 +3,10 @@ import { Mail, Phone, Instagram, Facebook, MessageCircle } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-teal-700 text-white">
+    <footer className="bg-primary text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="mb-8 text-center">
-          <p className="text-teal-100 text-lg font-light italic">
+          <p className="text-primary-foreground/80 text-lg font-light italic">
             "Crafting Unforgettable Journeys with Passion and Precision."
           </p>
         </div>
@@ -17,7 +17,7 @@ const Footer = () => {
               <img src="/logo.jpg" alt="Volvoro logo" className="h-10 w-10 object-contain rounded-full" />
               <span>Volvoro</span>
             </div>
-            <p className="text-sm text-teal-100 text-center md:text-left">
+            <p className="text-sm text-primary-foreground/80 text-center md:text-left">
               Travel, Redefined — Explore India with Comfort, Class, and Confidence.
             </p>
           </div>
@@ -27,7 +27,7 @@ const Footer = () => {
             <h3 className="mb-4 text-sm font-semibold text-white">Quick Links</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/packages" className="text-teal-100 hover:text-white transition-colors">
+                <Link to="/packages" className="text-primary-foreground/80 hover:text-white transition-colors">
                   Packages
                 </Link>
               </li>
@@ -52,7 +52,7 @@ const Footer = () => {
           {/* Destinations */}
           <div className="text-center md:text-left">
             <h3 className="mb-4 text-sm font-semibold text-white">Popular Destinations</h3>
-            <ul className="space-y-2 text-sm text-teal-100">
+            <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li className="hover:text-white transition-colors cursor-pointer">Manali</li>
               <li className="hover:text-white transition-colors cursor-pointer">Shimla</li>
               <li className="hover:text-white transition-colors cursor-pointer">Jaisalmer</li>
@@ -111,7 +111,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-teal-600 text-center text-sm text-teal-100">
+        <div className="mt-12 pt-6 border-t border-primary/50 text-center text-sm text-primary-foreground/80">
           <p>&copy; {new Date().getFullYear()} Volvoro. All rights reserved.</p>
           <div className="mt-2 flex justify-center space-x-6 text-xs">
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
