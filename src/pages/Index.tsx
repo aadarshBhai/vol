@@ -118,42 +118,6 @@ const Index = () => {
       
       {/* 6. Trust & Reviews (Testimonials) */}
       <TestimonialsSection />
-      
-      {/* 7. Contact & Support (Booking Form) */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 text-center mb-12">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-gray-900 mb-4"
-          >
-            Start Your Dream Trip
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
-          >
-            Book your perfect getaway in just a few simple steps
-          </motion.p>
-        </div>
-        <div className="container mx-auto px-4">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-4xl mx-auto"
-          >
-            <BookingForm />
-          </motion.div>
-        </div>
-      </section>
-      
       {/* Modals */}
       <ItineraryModal
         package={selectedPackage}
