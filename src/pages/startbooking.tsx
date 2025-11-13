@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { Button } from '@/components/ui/button';
 
 interface Option {
   label: string;
@@ -39,23 +41,211 @@ const activityOptions: Option[] = [
   { label: 'Spa & Wellness', icon: '💆' },
 ];
 
-const DreamTripForm: React.FC = () => {
+interface BookingData {
+  from?: string;
+  to?: string;
+  travelType?: string;
+  people?: string;
+  departure?: string;
+  return?: string;
+  budget?: string;
+  food?: string;
+  transport?: string;
+  activities?: string;
+}
+
+const DreamTripForm: React.FC = (): JSX.Element => {
+  const location = useLocation();
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [bookingData, setBookingData] = useState<BookingData>({});
+  const [selectedTravelType, setSelectedTravelType] = useState<string>('');
+  const [selectedFood, setSelectedFood] = useState<string>('');
+  const [selectedTransport, setSelectedTransport] = useState<string>('');
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  
+  // Initialize form state with default values
   const [formData, setFormData] = useState({
     from: '',
     to: '',
     budget: '',
     departureDate: '',
+    departureTime: '12:00',
     returnDate: '',
-    departureTime: '',
-    returnTime: '',
+    returnTime: '12:00',
     people: 1,
     travelType: '',
     food: '',
     transport: '',
-    activities: '',
+    activities: ''
   });
+
+  // Debug effect to log form data changes
+  useEffect(() => {
+    console.log('Form data updated:', formData);
+  }, [formData]);
+  
+  // Parse URL parameters when component mounts
+  useEffect(() => {
+    const data: BookingData = {};
+    const queryString = window.location.search.substring(1);
+    
+    // Check if it's a WhatsApp-style message
+    if (queryString.includes('NEW TRIP BOOKING')) {
+      try {
+        // Decode the entire query string
+        const decoded = decodeURIComponent(queryString);
+        
+        // Split into lines and process each line
+        const lines = decoded.split('\n').filter(line => line.trim() !== '');
+        
+        // Process each line to extract data
+        let currentLine = '';
+        
+        // Combine lines that were split by URL encoding
+        const processedLines: string[] = [];
+        for (const line of lines) {
+          if (line.match(/^\*\s*[A-Za-z]+:/) && currentLine) {
+            processedLines.push(currentLine.trim());
+            currentLine = line;
+          } else {
+            currentLine += (currentLine ? ' ' : '') + line.trim();
+          }
+        }
+        if (currentLine) processedLines.push(currentLine.trim());
+        
+        // Process the combined lines
+        let currentKey = '';
+        let currentValue = '';
+        
+        for (const line of processedLines) {
+          const match = line.match(/^\*\s*([A-Za-z\s]+):(.*)/);
+          if (match) {
+            // Save previous key-value pair if exists
+            if (currentKey && currentValue) {
+              data[currentKey.toLowerCase().replace(/\s+/g, '') as keyof BookingData] = currentValue.trim();
+            }
+            
+            // Start new key-value pair
+            currentKey = match[1].trim();
+            currentValue = match[2].trim();
+          } else if (currentKey) {
+            // Continue the current value if line doesn't start with a key
+            currentValue += ' ' + line.trim();
+          }
+        }
+        
+        // Save the last key-value pair
+        if (currentKey && currentValue) {
+          data[currentKey.toLowerCase().replace(/\s+/g, '') as keyof BookingData] = currentValue.trim();
+        }
+        
+        // Special handling for budget to remove currency symbol
+        if (data.budget) {
+          data.budget = data.budget.replace(/[^0-9]/g, '');
+        }
+        
+      } catch (error) {
+        console.error('Error parsing WhatsApp message:', error);
+      }
+    } else {
+      // Handle regular URL parameters
+      const params = new URLSearchParams(location.search);
+      params.forEach((value, key) => {
+        const decodedValue = decodeURIComponent(value.replace(/\*/g, ' '));
+        data[key as keyof BookingData] = decodedValue;
+      });
+    }
+
+    // Update form data with parsed values
+    if (Object.keys(data).length > 0) {
+      setBookingData(data);
+      console.log('Parsed URL data:', data); // Debug log
+      
+      // Format dates from strings like 'Fri, 14 Nov, 2025 at 2:39 PM'
+      const formatDate = (dateStr: string) => {
+        if (!dateStr) return '';
+        
+        // Try to parse the date string (handling formats like 'Fri, 14 Nov, 2025 at 2:39 PM')
+        const months: Record<string, number> = {
+          'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+          'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+        };
+        
+        // Try to match date formats
+        const dateMatch = dateStr.match(/(\w+),\s*(\d+)\s*(\w+),\s*(\d+)/);
+        if (dateMatch) {
+          const [_, _day, day, month, year] = dateMatch;
+          const monthIndex = months[month];
+          if (monthIndex !== undefined) {
+            const date = new Date(Number(year), monthIndex, Number(day));
+            if (!isNaN(date.getTime())) {
+              return date.toISOString().split('T')[0];
+            }
+          }
+        }
+        
+        // If parsing fails, try default Date parsing
+        const date = new Date(dateStr);
+        return isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0];
+      };
+
+      // Format time from strings like '2:39 PM'
+      const formatTime = (dateTimeStr: string) => {
+        if (!dateTimeStr) return '12:00';
+        
+        const timeMatch = dateTimeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (timeMatch) {
+          let [_, hours, minutes, period] = timeMatch;
+          let h = parseInt(hours, 10);
+          const m = parseInt(minutes, 10);
+          
+          if (period.toUpperCase() === 'PM' && h < 12) h += 12;
+          if (period.toUpperCase() === 'AM' && h === 12) h = 0;
+          
+          return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        }
+        
+        return '12:00'; // Default time
+      };
+
+      // Extract date and time from the original strings
+      const departureDateTime = data.departure || '';
+      const returnDateTime = data.return || '';
+      
+      // Update the form state
+      setFormData(prev => ({
+        ...prev,
+        from: data.from || prev.from,
+        to: data.to || prev.to,
+        budget: data.budget || prev.budget,
+        departureDate: formatDate(departureDateTime) || prev.departureDate,
+        departureTime: formatTime(departureDateTime) || prev.departureTime,
+        returnDate: formatDate(returnDateTime) || prev.returnDate,
+        returnTime: formatTime(returnDateTime) || prev.returnTime,
+        people: data.people ? parseInt(data.people, 10) || 1 : 1,
+        travelType: data.travelType || prev.travelType,
+        food: data.food || prev.food,
+        transport: data.transport || prev.transport,
+        activities: data.activities || prev.activities
+      }));
+      
+      // Update selected states for UI components
+      if (data.travelType) setSelectedTravelType(data.travelType);
+      if (data.food) setSelectedFood(data.food);
+      if (data.transport) setSelectedTransport(data.transport);
+      if (data.activities) {
+        setSelectedActivities(
+          data.activities
+            .split(',')
+            .map(a => a.trim())
+            .filter(Boolean)
+        );
+      }
+    }
+  }, [location.search]);
+
+  // Form state is already initialized at the top of the component
 
   const handleOptionClick = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -364,6 +554,25 @@ const DreamTripForm: React.FC = () => {
           <h4>Activities</h4>
           <OptionSelector options={activityOptions} field="activities" />
 
+          {/* Booking Summary */}
+          <div style={{ 
+            background: '#f8f9fa', 
+            padding: '20px', 
+            borderRadius: '10px', 
+            margin: '20px 0',
+            border: '1px solid #e9ecef'
+          }}>
+            <h3 style={{ marginTop: 0, color: '#2c3e50' }}>Booking Summary</h3>
+            <div style={{ lineHeight: '1.8' }}>
+              <p><strong>Trip:</strong> {formData.from || 'Not specified'} → {formData.to || 'Not specified'}</p>
+              <p><strong>Dates:</strong> {formData.departureDate || 'Not specified'} to {formData.returnDate || 'Not specified'}</p>
+              <p><strong>People / Type:</strong> {formData.people} {formData.travelType ? `— ${formData.travelType}` : ''}</p>
+              <p><strong>Budget:</strong> {formData.budget ? `₹${formData.budget}` : 'Not specified'}</p>
+              <p><strong>Food / Transport:</strong> {formData.food || 'Any'} / {formData.transport || 'Any'}</p>
+              <p><strong>Activities:</strong> {formData.activities || 'Open to suggestions'}</p>
+            </div>
+          </div>
+
           <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
             <button 
               onClick={handlePrevStep} 
@@ -387,7 +596,8 @@ const DreamTripForm: React.FC = () => {
                 padding: '12px 25px', 
                 borderRadius: '10px', 
                 fontWeight: 600,
-                cursor: 'pointer'
+                cursor: 'pointer',
+                border: 'none'
               }}
             >
               Book Now
@@ -395,16 +605,6 @@ const DreamTripForm: React.FC = () => {
           </div>
         </div>
       )}
-
-          <div style={{ background: '#f0f8f8', padding: '20px', borderRadius: '15px', marginTop: '30px', fontSize: '0.95rem' }}>
-            <h4>Summary</h4>
-            <p><strong>Trip:</strong> {formData.from && formData.to ? `${formData.from} → ${formData.to}` : 'Not set'}</p>
-            <p><strong>Dates:</strong> {formData.departureDate} to {formData.returnDate}</p>
-            <p><strong>People / Type:</strong> {formData.people} — {formData.travelType}</p>
-            <p><strong>Budget:</strong> {formData.budget ? `₹${formData.budget}` : '—'}</p>
-            <p><strong>Food / Transport:</strong> {formData.food} / {formData.transport}</p>
-            <p><strong>Activities:</strong> {formData.activities}</p>
-          </div>
         </div>
       </main>
       <Footer />
