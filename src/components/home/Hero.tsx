@@ -45,7 +45,9 @@ const Hero = () => {
             className="mt-8 flex flex-wrap gap-6"
           >
             <motion.a 
-              href="#packages"
+              href="https://volvorotourexplorer.com/packages"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-teal-700 hover:shadow-xl"
